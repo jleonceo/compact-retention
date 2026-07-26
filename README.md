@@ -60,7 +60,7 @@ haberlo commiteado, no que el resumen acierte a nombrarlo.
 ```
 
 Ese último párrafo sale siempre, y está ahí porque la cifra se lee sola como pérdida. No lo es. De
-veintiún cortes medidos, veinte no perdieron nada que no se pudiera recuperar.
+veintitrés cortes medidos, veintidós no perdieron nada que no se pudiera recuperar.
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
