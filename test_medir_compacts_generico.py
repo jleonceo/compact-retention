@@ -2,7 +2,7 @@
 """Suite de aceptacion de medir_compacts_generico.py. Sin dependencias externas (unittest).
 
 Cubre:
-  CA1  corre sobre un --projects-dir arbitrario con dos JSONL de juguete (uno con resumen, otro sin).
+  CA1  se ejecuta sobre un --projects-dir arbitrario con dos JSONL de juguete (uno con resumen, otro sin).
   W    la ventana se deriva sola: multi-resumen no recuenta lo de la ventana anterior.
   ENT  entidades: rutas (basename/completa), commits e IDs.
   COB  la aritmetica de cobertura.

@@ -3,7 +3,7 @@ name: ci
 # Por que existe: la suite es lo unico que sostiene las cifras de cobertura
 # que produce esta herramienta. Sin CI solo se ejecuta cuando alguien se acuerda.
 #
-# Sobre el sistema operativo: la suite corre en Windows, Linux y Mac. Estuvo solo en
+# Sobre el sistema operativo: la suite se ejecuta en Windows, Linux y Mac. Estuvo solo en
 # Windows mientras las rutas se normalizaban a separador de Windows, porque el basename
 # del sistema no parte por contrabarra en POSIX y la cobertura se hundia a cero sin dar
 # error. Eso ya no pasa: `nombre_de` parte por las dos barras y hay un caso que lo prueba
