@@ -43,11 +43,12 @@ Deja las comillas de la ruta: el nombre de la carpeta lo genera Claude Code a pa
 directorio de trabajo y puede traer espacios. Para medir una carpeta entera de golpe,
 `--projects-dir`.
 
-Lo que devuelve, sobre un historial real de 49 sesiones:
+Lo que devuelve. Esta salida es la del **26/07/2026** sobre un historial real; el tuyo dará otros
+números, y el mío también dentro de una semana, porque el historial crece con cada sesión:
 
 ```
 ------------------------------------------------------------------------------
-AGREGADO: 49 sesiones, 148 ventanas (144 con escrituras).
+AGREGADO: 50 sesiones, 149 ventanas (145 con escrituras).
 Nombres de fichero conservados por el resumen: banda de 1 a 29.
 Cobertura media (por nombre): 67%.
 Ahi vive la tesis del TECHO: el resumen conserva un numero acotado de nombres,
@@ -93,7 +94,7 @@ números:
 
 **Un corte no es una aparición.** El JSONL reescribe el mismo mensaje de resumen una vez por cada
 turno posterior: entre dos copias solo cambia un identificador interno. Sobre un historial real se
-contaron **229 apariciones para 148 cortes**, un 55 % de inflado repartido en 22 ficheros. Esta
+contaron **230 apariciones para 149 cortes**, un 54 % de inflado repartido en 22 ficheros. Esta
 herramienta las deduplica; si escribes la tuya, ese es el primer sitio donde se tuerce la cifra.
 
 **Las escrituras de subagente engordan el denominador.** Un agente lanzado en paralelo escribe
@@ -102,10 +103,9 @@ distinguen, así que la cobertura sale algo más baja de lo que corresponde.
 
 ### El límite del emparejamiento
 El emparejamiento de rutas es por nombre de fichero. Dos rutas distintas con el mismo nombre
-(`SKILL.md`) se unen,
-
-y el porcentaje sale **optimista**. Se informa aparte el recuento por ruta completa, que es el
-**pesimista**. La verdad está entre los dos, y por eso se publican los dos números.
+(`SKILL.md`) se unen, y el porcentaje sale **optimista**. Se informa aparte el recuento por ruta
+completa, que es el **pesimista**. La verdad está entre los dos, y por eso se publican los dos
+números.
 
 ---
 
@@ -134,8 +134,15 @@ session with several cuts splits itself: each `isCompactSummary` closes a window
 python medir_compacts_generico.py --sesion "path/to/session-file.jsonl"
 ```
 Claude Code sessions live under `~/.claude/projects/<encoded-cwd>/<uuid>.jsonl`, so to see which
-ones you have, run `ls ~/.claude/projects`. Quotes matter: in bash, angle brackets are redirections
-and the command breaks before it starts. To measure a whole folder at once, use `--projects-dir`.
+ones you have, run `ls ~/.claude/projects`. Keep the quotes around the path: Claude Code builds that
+folder name from your working directory and it can contain spaces. To measure a whole folder at
+once, use `--projects-dir`.
+
+What it prints is the output of **26 July 2026** on one real history. Yours will differ, and so will
+mine next week, because the history grows with every session.
+
+That last paragraph is always printed, and it is there because the number reads as loss on its own.
+It is not. Of twenty-three cuts measured, twenty-two lost nothing that could not be recovered.
 
 **With no arguments it reads your ENTIRE history**, every project at once, because that is the
 default. Nothing leaves your machine, but these are private conversations and their names are
@@ -162,7 +169,18 @@ its numbers:
 - The transcript is written asynchronously, so the last seconds of a live session may not be on
   disk yet.
 
-### The limit worth stating
+### The limits worth stating
+
+**A cut is not an appearance.** The JSONL rewrites the same summary message once per later turn:
+between two copies only an internal identifier changes. On one real history that meant **230
+appearances for 149 cuts**, a 54 % inflation spread over 22 files. This tool deduplicates them. If
+you write your own, that is the first place the number goes wrong.
+
+**Subagent writes inflate the denominator.** An agent launched in parallel writes files the main
+thread's summary was never going to name, because they are not its own. They are not told apart
+here, so coverage comes out slightly lower than it should.
+
+### The matching limit
 Path matching is by file basename. Two different paths sharing a name (`SKILL.md`) merge, and the
 percentage comes out **optimistic**. The count by full path is reported separately as the **pessimistic**
 figure. The truth sits between them, which is why both numbers ship.
@@ -183,8 +201,8 @@ La primera vez que se paso, doce de dieciocho sobrevivian: se podia dejar la cob
 clavada en 99 % con los veinte casos de entonces en verde.
 
 ## Requisitos / Requirements
-Python 3.8+. Solo biblioteca estandar: ni pytest ni nada que instalar.
-Python 3.8+, standard library only: no pytest, nothing to install.
+Python 3.9+. Solo biblioteca estandar: ni pytest ni nada que instalar.
+Python 3.9+, standard library only: no pytest, nothing to install.
 
 ## Licencia / License
 MIT. Ver [LICENSE](LICENSE).

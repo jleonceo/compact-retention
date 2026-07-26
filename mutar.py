@@ -85,7 +85,7 @@ MUTACIONES = [
      '"cob_base": (100.0 * len(hit_base) / len(u_base)) if u_base else None,',
      '"cob_base": (100.0 * len(hit_base) / len(u_rutas)) if u_rutas else None,'),
     # LAS NUEVE DE UN TERCERO. Un esceptico externo escribio doce mutaciones que yo no habia
-    # pensado y sobrevivieron nueve, con los catorce sabotajes de arriba cazados y el banco en
+    # pensado y sobrevivieron nueve, con los quince sabotajes de arriba cazados y el banco en
     # verde. Un mutador lo escribe quien conoce el codigo, asi que hereda su punto ciego: el
     # numero que da no mide la calidad del banco, mide el acuerdo entre dos cosas de la misma
     # cabeza. Estas nueve entran aqui para que no vuelvan, y la unica forma de encontrar las

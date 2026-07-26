@@ -377,7 +377,7 @@ def imprimir(por_ventana, agregado, projects_dir):
         # vivia en un cursor privado y en un informe, o sea en ningun sitio para quien se
         # descarga la herramienta. Un desconocido lee "cobertura 67 %" y entiende que pierde
         # un tercio de su trabajo en cada corte, que es exactamente lo contrario de lo medido:
-        # de veintiun cortes seguidos, veinte no perdieron NADA irrecuperable. Una cifra que
+        # de veintitres cortes seguidos, veintidos no perdieron NADA irrecuperable. Una cifra que
         # se puede leer como dano tiene que decir que no lo es en el mismo sitio donde se
         # imprime, no en la documentacion de al lado.
         print("QUE NO ES ESTE NUMERO: no es cuanto trabajo se pierde. Mide en cuantas cosas")
@@ -443,5 +443,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    import sys
     sys.exit(main())

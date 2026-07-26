@@ -238,7 +238,8 @@ class TestLoQueEncontroUnUsuarioNuevo(BaseDir):
 
     def test_un_fichero_que_no_es_jsonl_no_se_cuela(self):
         p = os.path.join(self.tmp, "notas.txt")
-        io.open(p, "w", encoding="utf-8").write("esto no es una sesion")
+        with io.open(p, "w", encoding="utf-8") as fh:
+            fh.write("esto no es una sesion")
         self.assertEqual(m.sesiones_en(p), [])
 
     def test_json_valido_que_no_es_objeto_no_tumba_la_lectura(self):
