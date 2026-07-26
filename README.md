@@ -141,8 +141,8 @@ once, use `--projects-dir`.
 What it prints is the output of **26 July 2026** on one real history. Yours will differ, and so will
 mine next week, because the history grows with every session.
 
-That last paragraph is always printed, and it is there because the number reads as loss on its own.
-It is not. Of twenty-three cuts measured, twenty-two lost nothing that could not be recovered.
+That last paragraph is always printed. On its own the number reads as loss. It is not. Of
+twenty-three cuts measured, twenty-two lost nothing that could not be recovered.
 
 **With no arguments it reads your ENTIRE history**, every project at once, because that is the
 default. Nothing leaves your machine, but these are private conversations and their names are
