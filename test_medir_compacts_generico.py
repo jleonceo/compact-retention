@@ -620,5 +620,55 @@ class TestLasNueveQueSobrevivieron(BaseDir):
         return cod, out.getvalue(), err.getvalue()
 
 
+class TestLoQueDestapoLaAuditoriaExterna(unittest.TestCase):
+    """Dos defectos que 48 casos y 23 sabotajes no vieron, porque no miraban ahi.
+
+    Los 48 casos son de fonteria: parseo, deduplicacion, partir rutas, banderas, privacidad,
+    portabilidad. Ninguno preguntaba si lo que se cuenta es lo que se dice contar. Un auditor
+    externo hizo esa pregunta el 26/07/2026 y salieron estas dos.
+    """
+
+    def test_un_tramo_de_UUID_no_es_un_hash_de_commit(self):
+        """La clase de commits venia sesgada hacia abajo por construccion.
+
+        `\\b` trata el guion como frontera, asi que cada tramo de un UUID de nombre de sesion
+        pasaba por hash. Y un tramo de UUID no aparece nunca en un resumen, luego entraba en
+        el denominador y jamas en el numerador. Sobre cinco ventanas reales, cuatro de los
+        veintitres "hashes" contados eran esto.
+        """
+        uuid = "6424de57-b64d-4b55-aa59-43a9aa7625cb"
+        self.assertEqual(m.RE_COMMIT.findall(uuid), [],
+                         "un UUID sigue aportando hashes falsos al denominador")
+        # Control positivo: si el patron se rompe del todo, el caso de arriba pasa igual.
+        self.assertEqual(m.RE_COMMIT.findall("el commit 1d36d8e lo arregla"), ["1d36d8e"],
+                         "el patron ha dejado de ver un hash corto de verdad")
+        largo = "429fc19a1b2c3d4e5f60718293a4b5c6d7e8f901"
+        self.assertEqual(m.RE_COMMIT.findall(largo), [largo],
+                         "el patron ha dejado de ver un hash completo de 40")
+        self.assertEqual(m.RE_COMMIT.findall("a74dd00b0653d7683 no es un hash"), [],
+                         "17 caracteres no es una longitud que git emita")
+
+    def test_la_salida_dice_que_la_cobertura_no_es_dano(self):
+        """El aviso vivia en un cursor privado, o sea en ningun sitio para quien la instala.
+
+        La herramienta imprime un porcentaje que se lee solo como perdida. Lo medido es lo
+        contrario: de veintiun cortes, veinte sin perdida real. Si el numero sale por consola,
+        su limite tiene que salir por consola.
+        """
+        import io as _io
+        import contextlib
+        agregado = {"sesiones": 1, "ventanas": 1, "ventanas_con_escrituras": 1,
+                    "nombres_conservados_min": 3, "nombres_conservados_max": 9,
+                    "cobertura_media_base": 67.0}
+        buf = _io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            m.imprimir([], agregado, "C:/no/importa")
+        salida = buf.getvalue().lower()
+        self.assertIn("no es cuanto trabajo se pierde", salida,
+                      "la salida publica una cobertura sin decir que no es dano")
+        self.assertIn("commiteado", salida,
+                      "la salida no dice que lo que protege es commitear")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

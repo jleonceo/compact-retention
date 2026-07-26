@@ -39,7 +39,21 @@ import sys
 ESCRIBEN = ("Write", "Edit", "MultiEdit", "NotebookEdit")
 
 # Hash de commit: 7 a 40 hex. Identificador de dominio: DOS+ mayusculas, guion, 2 a 4 digitos.
-RE_COMMIT = re.compile(r"\b[0-9a-f]{7,40}\b")
+#
+# LAS DOS RESTRICCIONES DE ABAJO SON DEL 26/07/2026, y salen de una medicion sobre datos
+# reales, no de leer el patron. Era `\b[0-9a-f]{7,40}\b`, y `\b` trata el guion como
+# frontera: cada tramo de un UUID pasaba por hash de commit. Sondeando cinco ventanas
+# reales salieron 23 "hashes", de los que cuatro eran tramos de UUID de nombres de sesion
+# (`c1ecef4f`, `099c1bca`, `cf21d492`, `8df4798a3d57`). Como un tramo de UUID no aparece
+# jamas en un resumen, esa clase venia SESGADA HACIA ABAJO por construccion: la linea
+# "commits: 2 de 22" contaba veintidos cosas que no eran commits.
+#
+#   - Los lookarounds excluyen lo pegado a un guion o a otro caracter de palabra, que es
+#     como viene un tramo de UUID.
+#   - La longitud pasa a 7-12 o 40 exactos, que es lo que git produce de verdad (corto o
+#     completo). El rango abierto colaba cosas como `a74dd00b0653d7683`, 17 caracteres,
+#     que no es una longitud que git emita.
+RE_COMMIT = re.compile(r"(?<![0-9A-Za-z-])(?:[0-9a-f]{40}|[0-9a-f]{7,12})(?![0-9A-Za-z-])")
 RE_ID = re.compile(r"\b[A-Z]{2,}-\d{2,4}\b")
 
 
@@ -358,6 +372,17 @@ def imprimir(por_ventana, agregado, projects_dir):
         print("Cobertura media (por nombre): %.0f%%." % a["cobertura_media_base"])
         print("Ahi vive la tesis del TECHO: el resumen conserva un numero acotado de nombres,")
         print("no un porcentaje fijo; cuanto mas grande la ventana, menor la fraccion.")
+        print()
+        # ESTO NO ES DECORACION Y VA AQUI A PROPOSITO (26/07/2026). El aviso existia, pero
+        # vivia en un cursor privado y en un informe, o sea en ningun sitio para quien se
+        # descarga la herramienta. Un desconocido lee "cobertura 67 %" y entiende que pierde
+        # un tercio de su trabajo en cada corte, que es exactamente lo contrario de lo medido:
+        # de veintiun cortes seguidos, veinte no perdieron NADA irrecuperable. Una cifra que
+        # se puede leer como dano tiene que decir que no lo es en el mismo sitio donde se
+        # imprime, no en la documentacion de al lado.
+        print("QUE NO ES ESTE NUMERO: no es cuanto trabajo se pierde. Mide en cuantas cosas")
+        print("te repartias, no cuanto dano hizo el corte. Lo que protege lo que importa es")
+        print("haberlo commiteado, no que el resumen acierte a nombrarlo.")
     else:
         print("Ninguna ventana con escrituras: nada que medir en esta fuente.")
     print("-" * 78)

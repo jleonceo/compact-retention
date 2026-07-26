@@ -150,14 +150,14 @@ figure. The truth sits between them, which is why both numbers ship.
 
 ## Tests
 ```bash
-python test_medir_compacts_generico.py    # 48 casos
-python mutar.py                           # 23 sabotajes contra esos 48 casos
+python test_medir_compacts_generico.py    # 50 casos
+python mutar.py                           # 24 sabotajes contra esos 50 casos
 ```
 
 
 El segundo comando es el que da derecho a fiarse del primero. Sabotea el codigo a proposito,
 una linea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un
-fallo del codigo: es una linea que ningun caso vigila. Hoy son veintitres de veintitres, cero huecos.
+fallo del codigo: es una linea que ningun caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos.
 La primera vez que se paso, doce de dieciocho sobrevivian: se podia dejar la cobertura media
 clavada en 99 % con los veinte casos de entonces en verde.
 
