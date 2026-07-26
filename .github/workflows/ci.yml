@@ -1,0 +1,45 @@
+name: ci
+
+# Por que existe: la suite es lo unico que sostiene las cifras de cobertura
+# que produce esta herramienta. Sin CI solo se ejecuta cuando alguien se acuerda.
+#
+# Sobre el sistema operativo: la suite corre en Windows, Linux y Mac. Estuvo solo en
+# Windows mientras las rutas se normalizaban a separador de Windows, porque el basename
+# del sistema no parte por contrabarra en POSIX y la cobertura se hundia a cero sin dar
+# error. Eso ya no pasa: `nombre_de` parte por las dos barras y hay un caso que lo prueba
+# sustituyendo la funcion del sistema por la de POSIX.
+#
+# Aviso honesto (26/07/2026): esta matriz de tres sistemas y tres versiones NUNCA SE HA
+# EJECUTADO. El fichero existia en un commit local sin subir mientras la herramienta vivia
+# dentro de otro repo, y se presento como si estuviera operando. Lo unico probado hasta
+# hoy es Python 3.14 en Windows. La primera ejecucion real sera el primer push.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        python-version: ["3.9", "3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Biblioteca estandar unicamente: no hay dependencias que instalar.
+      - name: Suite
+        run: python test_medir_compacts_generico.py
+
+      - name: La herramienta arranca y responde (exit 0)
+        run: python medir_compacts_generico.py -h
+
+      # La mutacion es lo que distingue un banco de un adorno: sabotea el codigo y
+      # exige que la suite se ponga roja. Sale con 1 si algun sabotaje pasa callando.
+      - name: Verificacion por mutacion
+        run: python mutar.py
