@@ -39,20 +39,40 @@ para ver cuáles tienes:
 ls ~/.claude/projects
 ```
 
-Las comillas importan: en bash, los símbolos de menor y mayor son redirecciones y el comando se
-rompe antes de arrancar. Para medir una carpeta entera de golpe, `--projects-dir`.
+Deja las comillas de la ruta: el nombre de la carpeta lo genera Claude Code a partir de tu
+directorio de trabajo y puede traer espacios. Para medir una carpeta entera de golpe,
+`--projects-dir`.
+
+Lo que devuelve, sobre un historial real de 49 sesiones:
+
+```
+------------------------------------------------------------------------------
+AGREGADO: 49 sesiones, 148 ventanas (144 con escrituras).
+Nombres de fichero conservados por el resumen: banda de 1 a 29.
+Cobertura media (por nombre): 67%.
+Ahi vive la tesis del TECHO: el resumen conserva un numero acotado de nombres,
+no un porcentaje fijo; cuanto mas grande la ventana, menor la fraccion.
+
+QUE NO ES ESTE NUMERO: no es cuanto trabajo se pierde. Mide en cuantas cosas
+te repartias, no cuanto dano hizo el corte. Lo que protege lo que importa es
+haberlo commiteado, no que el resumen acierte a nombrarlo.
+------------------------------------------------------------------------------
+```
+
+Ese último párrafo sale siempre, y está ahí porque la cifra se lee sola como pérdida. No lo es. De
+veintiún cortes medidos, veinte no perdieron nada que no se pudiera recuperar.
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
 aparecen por pantalla, así que conviene saberlo antes de la primera ejecución curiosa. El programa
 lo avisa.
 
-### Lo que puede romper esto, dicho por quien lo escribe
+### Lo que puede romper esto
 
 La documentación de Claude Code dice, sobre los ficheros que esta herramienta lee, que **el formato
 de cada entrada es interno y cambia entre versiones, de modo que un programa que los lea
-directamente puede dejar de funcionar en cualquier actualización**. Está en
-[code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions), y recomienda usar
+directamente puede dejar de funcionar en cualquier actualización**. Lo dice en
+[code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions). Ahí recomienda usar
 `/export` o las interfaces de script en su lugar.
 
 Esta herramienta hace justo lo que ahí se desaconseja, y conviene saberlo antes de apoyarse en sus
@@ -121,12 +141,13 @@ and the command breaks before it starts. To measure a whole folder at once, use 
 default. Nothing leaves your machine, but these are private conversations and their names are
 printed, so it is worth knowing before the first curious run. The program says so.
 
-### What can break this, according to the people who wrote it
+### What can break this
 
 The Claude Code documentation states, about the files this tool reads, that **the entry format is
 internal and changes between versions, so scripts that parse them directly can break on any
-release**. It is at [code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions),
-and it recommends `/export` or the script interfaces instead.
+release**. The page is
+[code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions). It recommends `/export`
+or the script interfaces instead.
 
 This tool does exactly what that paragraph advises against, and you should know before leaning on
 its numbers:
