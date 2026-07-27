@@ -123,8 +123,10 @@ MUTACIONES = [
 def _rescatar_residuo():
     if not os.path.exists(RESIDUO):
         return False
-    io.open(MEDIDO, "w", encoding="utf-8", newline="\n").write(
-        io.open(RESIDUO, encoding="utf-8").read())
+    # El rescate conservaba mal por los dos lados: leia con saltos universales y escribia
+    # forzando LF, asi que restaurar tras una muerte convertia el fichero entero.
+    io.open(MEDIDO, "w", encoding="utf-8", newline="").write(
+        io.open(RESIDUO, encoding="utf-8", newline="").read())
     os.remove(RESIDUO)
     print("  [!] La ejecucion anterior murio con una mutacion puesta. Fichero RESTAURADO.")
     return True
@@ -146,17 +148,34 @@ def main(argv=None):
     # de clon frio. `newline=""` desactiva la traduccion en las dos direcciones.
     original = io.open(MEDIDO, encoding="utf-8", newline="").read()
     io.open(RESIDUO, "w", encoding="utf-8", newline="").write(original)
+
+    # EL ARREGLO DE ARRIBA SE HIZO A MEDIAS Y LO DESTAPO EL CI (27/07/2026). Se corrigio la
+    # LECTURA y se dejaron las tres escrituras forzando LF, o sea que el fichero se seguia
+    # convirtiendo al restaurarlo: el mismo arbol sucio que se decia resuelto. Y encima el ancla
+    # multilinea de una mutacion se escribe con `\n` a pelo, asi que en un clon con CRLF no casaba
+    # con nada, esa mutacion salia SIN APLICAR y `mutar.py` terminaba con codigo 1. Los tres
+    # trabajos de Windows de la matriz salieron rojos por esto; los seis de Linux y Mac, verdes,
+    # porque alli el checkout es LF y el defecto es invisible.
+    #
+    # `SALTO` es el final de linea REAL del fichero medido, y las anclas se traducen a el antes de
+    # buscarlas. Asi el mutador funciona igual en un clon LF y en uno CRLF, que es lo unico que
+    # puede prometer una herramienta que se descarga.
+    SALTO = "\r\n" if "\r\n" in original else "\n"
+
+    def como_el_fichero(txt):
+        return txt.replace(NL, SALTO) if SALTO != NL else txt
     cazadas = huecos = sin_aplicar = 0
     print("=" * 78)
     print("VERIFICACION POR MUTACION  --  %d sabotajes contra el banco" % len(MUTACIONES))
     print("=" * 78)
     try:
         for desc, viejo, nuevo in MUTACIONES:
+            viejo, nuevo = como_el_fichero(viejo), como_el_fichero(nuevo)
             if viejo not in original:
                 print("  %-56s SIN APLICAR (el codigo cambio)" % desc[:56])
                 sin_aplicar += 1
                 continue
-            io.open(MEDIDO, "w", encoding="utf-8", newline="\n").write(
+            io.open(MEDIDO, "w", encoding="utf-8", newline="").write(
                 original.replace(viejo, nuevo, 1))
             r = subprocess.run([sys.executable, BANCO], capture_output=True, cwd=AQUI)
             if r.returncode != 0:
@@ -165,9 +184,9 @@ def main(argv=None):
             else:
                 huecos += 1
                 print("  %-56s *** HUECO ***" % desc[:56])
-            io.open(MEDIDO, "w", encoding="utf-8", newline="\n").write(original)
+            io.open(MEDIDO, "w", encoding="utf-8", newline="").write(original)
     finally:
-        io.open(MEDIDO, "w", encoding="utf-8", newline="\n").write(original)
+        io.open(MEDIDO, "w", encoding="utf-8", newline="").write(original)
         if os.path.exists(RESIDUO):
             os.remove(RESIDUO)
 
