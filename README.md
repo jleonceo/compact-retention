@@ -80,7 +80,7 @@ Esta herramienta hace justo lo que ahí se desaconseja, y conviene saberlo antes
 números:
 
 - **Probada contra Claude Code 2.x**, en julio de 2026. Si el formato cambia, lo que verás es un
-  recuento que baja sin motivo, no un error: por eso el banco fabrica sus propias trazas y no
+  recuento que baja sin motivo en vez de un error: por eso el banco fabrica sus propias trazas y no
   depende de tu historial.
 - **Tus transcripts se borran a los 30 días** por defecto (`cleanupPeriodDays`). Cualquier medición
   «desde siempre» tiene ese suelo, y una regla dada de alta hace tres meses no se puede medir desde
