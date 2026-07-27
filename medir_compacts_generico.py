@@ -118,8 +118,8 @@ def ventanas_de_sesion(path):
 
     UN CORTE NO ES UNA APARICION. El JSONL reescribe el mismo mensaje `isCompactSummary` una vez
     por cada prompt posterior: entre dos copias solo cambia `promptId`, y `uuid`, `parentUuid`,
-    `timestamp` y el mensaje son identicos. Sobre un historial real medido el 27/07 hay **233
-    apariciones para 152 cortes**, un 53 % de inflado en 22 ficheros, con una sesion que sola tenia
+    `timestamp` y el mensaje son identicos. Sobre un historial real medido el 27/07 hay **234
+    apariciones para 153 cortes**, un 53 % de inflado en 22 ficheros, con una sesion que sola tenia
     22 apariciones de 7 resumenes. Contarlas todas abre ventanas que nunca existieron, reparte las
     escrituras de un corte entre varias y saca el MISMO resumen con seis porcentajes distintos.
     """
@@ -377,7 +377,7 @@ def imprimir(por_ventana, agregado, projects_dir):
         # vivia en un cursor privado y en un informe, o sea en ningun sitio para quien se
         # descarga la herramienta. Un desconocido lee "cobertura 67 %" y entiende que pierde
         # un tercio de su trabajo en cada corte, que es exactamente lo contrario de lo medido:
-        # de veintitres cortes seguidos, veintidos no perdieron NADA irrecuperable. Una cifra que
+        # de veintisiete cortes seguidos, veintitres no perdieron NADA irrecuperable. Una cifra que
         # se puede leer como dano tiene que decir que no lo es en el mismo sitio donde se
         # imprime, no en la documentacion de al lado.
         print("QUÉ NO ES ESTE NÚMERO: no es cuánto trabajo se pierde. Mide en cuántas cosas")

@@ -1,10 +1,12 @@
 # compact-retention
 
 Mide qué sobrevive al resumen automático de un contexto largo en Claude Code, leyendo solo el JSONL de
-sesión. Sin instalar nada, sin hooks propios, reproducible por cualquiera.
+sesión. Sin instalar nada y sin hooks propios. **El medidor lo ejecutas tú sobre tus sesiones; la serie
+de veintisiete cortes que hay más abajo salió de una instalación privada y esa no la puedes repetir.**
 
 *Measures what survives the automatic summary of a long context in Claude Code, reading only the session
-JSONL. No install, no custom hooks, reproducible by anyone.*
+JSONL. No install, no custom hooks. **You run the measurer on your own sessions; the twenty-seven-cut
+series below comes from a private install and that part you cannot replay.***
 
 ---
 
@@ -66,8 +68,13 @@ medirlas.
 ```
 
 Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
-es: de los veintiséis cortes que este autor lleva medidos uno por uno, veinticinco no perdieron nada
-que no se pudiera recuperar de git o del disco.
+es: de los veintisiete cortes que este autor lleva medidos uno por uno, **veintitrés** no perdieron
+nada que no se pudiera recuperar de git o del disco. En los otros cuatro se perdió algo de verdad, y
+lo perdido fueron seis ficheros en total.
+
+Aquí ponía «de los veintiséis, veinticinco». Esa forma de «todos menos uno» llevaba tres versiones
+arrastrándose sin volver a medirse. La destapó un escéptico ejecutando el medidor en vez de leer el
+texto. Cuatro sobre veintisiete sigue siendo poco, pero es cuatro veces más de lo que se publicaba.
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
@@ -104,27 +111,31 @@ medido detrás de la elección del porcentaje.
 modelo trabaja peor con el contexto muy lleno, y 600k era la estimación del borde de la zona buena
 en esta instalación. Cortar a 300k dejaba sin usar la mitad del ancho de banda aprovechable.
 
-**Y aquí es donde hace falta el medidor**, porque lo que sale no es lo que uno diría. Veinte cortes
+**Y aquí es donde hace falta el medidor**, porque lo que sale no es lo que uno diría. Veintiún cortes
 automáticos medidos con la misma vara, repartidos en los tres regímenes:
 
 ```
 por defecto ~987k   n=4    conservado 46 %   nombres por ventana 29,0
 override 30 ~292k   n=5    conservado 88 %   nombres por ventana 10,2
-override 60 ~585k   n=11   conservado 63 %   nombres por ventana 27,0
+override 60 ~585k   n=12   conservado 61 %   nombres por ventana 27,5
 ```
+
+La fila del override 60 pasó de n=11 a n=12 el 27/07 por la tarde, con un corte que entró después de
+escribir esto y que conservó poco. Se deja dicho porque la serie crece sola y una tabla publicada
+envejece cada vez que el autor trabaja.
 
 Leído de corrido parece que doblar el umbral cuesta veinticinco puntos de conservación. No es eso lo
 que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro, y la variable que manda
 es esa:
 
 ```
-correlación densidad (nombres distintos en la ventana) contra % conservado, n=26
-   Pearson  −0,76
-   Spearman −0,76
+correlación densidad (nombres distintos en la ventana) contra % conservado, n=27
+   Pearson  −0,77
+   Spearman −0,75
 ```
 
-Los veinte de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre el
-umbral. La correlación usa las veintiséis ventanas medidas, o sea esos veinte más seis cortes
+Los veintiuno de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre el
+umbral. La correlación usa las veintisiete ventanas medidas, o sea esos veintiuno más seis cortes
 manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la informan.
 
 Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en la única
@@ -187,7 +198,7 @@ ver el dato no es una predicción.
 **4. Refutar la hipótesis rival antes de celebrar la propia.** Existe un mecanismo documentado que,
 de estar actuando aquí, habría invalidado el trabajo entero: uno que recorta el contexto al llegar
 al 90 % de ocupación. Se descartó con dato propio, y el argumento importa entero: los cortes no
-caían a un porcentaje cualquiera, sino **exactamente en la ventana menos un margen fijo**, que es la
+caían a un porcentaje cualquiera, sino **en la ventana menos un margen**, que es la
 firma de un umbral por buffer y no la de ese mecanismo. Con la mitad del argumento (el 90 % contra
 el 98,7 %) la conclusión ni siquiera se sostiene.
 
@@ -222,7 +233,9 @@ números:
   depende de tu historial.
 - **Tus transcripts se borran a los 30 días** por defecto (`cleanupPeriodDays`). Cualquier medición
   «desde siempre» tiene ese suelo, y una regla que diste de alta hace tres meses no la puedes medir desde
-  su alta.
+  su alta. **Y esto vale para las cifras de aquí arriba:** la instalación de la que salen tiene ese
+  valor puesto en 3650, o sea el borrado desactivado. Con los treinta días de fábrica no habría
+  historial suficiente para llegar a cincuenta y una sesiones.
 - `CLAUDE_CONFIG_DIR` mueve la carpeta entera fuera de `~/.claude`, y
   `CLAUDE_CODE_SKIP_PROMPT_HISTORY` deja de escribirlos.
 - El transcript se escribe de forma asíncrona, así que los últimos segundos de una sesión viva
@@ -232,7 +245,7 @@ números:
 
 **Un corte no es una aparición.** El JSONL reescribe el mismo mensaje de resumen una vez por cada
 turno posterior: entre dos copias solo cambia un identificador interno. Sobre un historial real, medido el
-27/07/2026, hay **233 apariciones para 152 cortes**, un 53 % de inflado repartido en 22 ficheros. Esta
+27/07/2026, hay **234 apariciones para 153 cortes**, un 53 % de inflado repartido en 22 ficheros. Esta
 herramienta las deduplica; si escribes la tuya, ese es el primer sitio donde se tuerce la cifra.
 
 **Las escrituras de subagente engordan el denominador.** Un agente lanzado en paralelo escribe
@@ -282,8 +295,14 @@ next week, because the history grows with every session. Two lines to read it: `
 the mean coverage by name, and `banda de 1 a 29` is the range of names any one summary kept.
 
 The last two paragraphs are always printed. On its own the number reads as loss. It is not: of the
-twenty-six cuts this author has measured one by one, twenty-five lost nothing that could not be
-recovered from git or from disk.
+twenty-seven cuts this author has measured one by one, **twenty-three** lost nothing that could not
+be recovered from git or from disk. In the other four something was really lost, and what was lost
+came to six files in total.
+
+This used to say "of the twenty-six, twenty-five". That "all but one" shape had been dragged along
+for three versions without being measured again. A skeptic caught it by running the measurer
+instead of reading the text. Four out of twenty-seven is still few, but it is four times more than
+what was being published.
 
 **With no arguments it reads your ENTIRE history**, every project at once, because that is the
 default. Nothing leaves your machine, but these are private conversations and their names are
@@ -319,25 +338,29 @@ works worse with a very full context, and 600k was the estimated edge of the goo
 install. Cutting at 300k left half of the usable bandwidth unused.
 
 **And this is where the measurement earns its keep**, because the result is not the intuitive one.
-Twenty automatic cuts, same yardstick, across the three regimes:
+Twenty-one automatic cuts, same yardstick, across the three regimes:
 
 ```
 default    ~987k   n=4    preserved 46 %   names per window 29.0
 override 30 ~292k  n=5    preserved 88 %   names per window 10.2
-override 60 ~585k  n=11   preserved 63 %   names per window 27.0
+override 60 ~585k  n=12   preserved 61 %   names per window 27.5
 ```
+
+The override-60 row went from n=11 to n=12 on the afternoon of 27/07, with a cut that landed after
+this was written and preserved little. It is said here because the series grows on its own, and a
+published table ages every time the author works.
 
 Read straight, doubling the threshold looks like it costs twenty-five points. That is not what the
 data says. Those windows carried nearly three times as many names. That is the variable that rules:
 
 ```
-correlation between window density (distinct names) and % preserved, n=26
-   Pearson  -0.76
-   Spearman -0.76
+correlation between window density (distinct names) and % preserved, n=27
+   Pearson  -0.77
+   Spearman -0.75
 ```
 
-The twenty in the table are the **automatic** cuts, the only ones that say anything about the
-threshold. The correlation uses all twenty-six measured windows, those twenty plus six manual cuts:
+The twenty-one in the table are the **automatic** cuts, the only ones that say anything about the
+threshold. The correlation uses all twenty-seven measured windows, those twenty-one plus six manual cuts:
 manual cuts tell you nothing about the threshold, but they do inform the density relationship.
 
 Two yardsticks that do not assume the same shape of relationship point the same way. And in the only
@@ -399,7 +422,7 @@ data is not a prediction.
 **4. Refute the rival hypothesis before celebrating your own.** A documented mechanism exists that,
 had it been active here, would have invalidated the whole effort: one that trims context at 90 %
 occupancy. It was ruled out with local data, and the argument matters in full: the cuts did not land
-at some arbitrary percentage but **exactly at the window minus a fixed margin**, which is the
+at some arbitrary percentage but **at the window minus a margin**, which is the
 signature of a buffer threshold and not of that mechanism. With half the argument (90 % versus
 98.7 %) the conclusion does not even hold.
 
@@ -434,7 +457,10 @@ its numbers:
   dropping for no reason, not an error. That is why the test suite builds its own traces and never
   reads your real history.
 - **Your transcripts are deleted after 30 days** by default (`cleanupPeriodDays`). Any "since the
-  beginning" measurement has that floor.
+  beginning" measurement has that floor, and a rule you added three months ago cannot be measured
+  from the day you added it. **This applies to the figures above:** the install they come from has
+  that value set to 3650, which disables the deletion. With the factory thirty days there would not
+  be enough history to reach fifty-one sessions.
 - `CLAUDE_CONFIG_DIR` moves the whole folder out of `~/.claude`, and
   `CLAUDE_CODE_SKIP_PROMPT_HISTORY` stops them from being written at all.
 - The transcript is written asynchronously, so the last seconds of a live session may not be on
@@ -443,8 +469,8 @@ its numbers:
 ### The limits worth stating
 
 **A cut is not an appearance.** The JSONL rewrites the same summary message once per later turn:
-between two copies only an internal identifier changes. On one real history, measured on 27 July 2026, that meant **233
-appearances for 152 cuts**, a 53 % inflation spread over 22 files. This tool deduplicates them. If
+between two copies only an internal identifier changes. On one real history, measured on 27 July 2026, that meant **234
+appearances for 153 cuts**, a 53 % inflation spread over 22 files. This tool deduplicates them. If
 you write your own, that is the first place the number goes wrong.
 
 **Subagent writes inflate the denominator.** An agent launched in parallel writes files the main
@@ -469,10 +495,16 @@ El segundo comando es el que da derecho a fiarse del primero. Sabotea el código
 línea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
 código: es una línea que ningún caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos.
 
-*Aquí había una frase que decía «la primera vez sobrevivían doce de dieciocho». No se ha podido
-anclar a ningún artefacto de este repositorio y probablemente venía de otro paquete, así que se
-retira en vez de dejarla puesta. Lo que sí queda documentado de este banco es la auditoría del
-26/07/2026, con nueve hallazgos y dos que bloqueaban la publicación.*
+*El origen de este banco está escrito en la cabecera de `mutar.py`: el 25/07/2026 un escéptico pasó
+dieciocho mutaciones a mano contra una suite de veinte casos y **sobrevivieron doce**. Se podía dejar
+la cobertura clavada en el 99 %, o borrar el aviso de privacidad que este README promete, con los
+veinte casos en verde. De ahí salen los veinticuatro sabotajes de hoy.*
+
+*Y una corrección sobre la corrección. Este párrafo llegó a decir que esa frase «no se ha podido
+anclar a ningún artefacto de este repositorio» y que se retiraba por eso. Era falso: el artefacto es
+`mutar.py`, o sea el segundo de los dos comandos que este README manda ejecutar. Lo cazó un escéptico
+el 27/07 abriendo el fichero. Retirar una afirmación porque no se encuentra su fuente, sin haber
+mirado dentro del propio paquete, es el mismo error que retirarla tarde.*
 
 ## Requisitos / Requirements
 Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar.

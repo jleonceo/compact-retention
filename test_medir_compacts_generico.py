@@ -277,8 +277,8 @@ class TestLoQueEncontroUnUsuarioNuevo(BaseDir):
 class TestUnCorteNoEsUnaAparicion(BaseDir):
     """El JSONL reescribe el mismo resumen una vez por cada prompt posterior.
 
-    Medido el 25/07 sobre un historial real: 229 apariciones de `isCompactSummary` para 148 cortes,
-    un 55 % de inflado en 22 ficheros. Entre dos copias solo cambia `promptId`. Contarlas todas abre
+    Medido el 27/07 sobre un historial real: 234 apariciones de `isCompactSummary` para 153 cortes,
+    un 53 % de inflado en 22 ficheros. Entre dos copias solo cambia `promptId`. Contarlas todas abre
     ventanas que nunca existieron y saca el mismo resumen con seis porcentajes distintos.
     """
 
@@ -503,7 +503,7 @@ class TestLasNueveQueSobrevivieron(BaseDir):
     """Nueve mutaciones que un esceptico externo escribio y el banco no cazo.
 
     LA LECCION, antes que los casos: el mutador lo habia escrito yo, y probaba lo que yo ya sabia
-    que habia que probar. Catorce sabotajes propios, catorce cazados, cero huecos, y otro venia con
+    que habia que probar. Quince sabotajes propios, quince cazados, cero huecos, y otro venia con
     doce distintos de los que sobrevivieron nueve. Un mutador escrito por el autor hereda el punto
     ciego del autor; el numero que da no mide la calidad del banco, mide el acuerdo entre dos
     cosas que salieron de la misma cabeza.
@@ -662,7 +662,7 @@ class TestLoQueDestapoLaAuditoriaExterna(unittest.TestCase):
         """El aviso vivia en un cursor privado, o sea en ningun sitio para quien la instala.
 
         La herramienta imprime un porcentaje que se lee solo como perdida. Lo medido es lo
-        contrario: de veintiun cortes, veinte sin perdida real. Si el numero sale por consola,
+        contrario: de veintisiete cortes, veintitres sin perdida real. Si el numero sale por consola,
         su limite tiene que salir por consola.
         """
         import io as _io
