@@ -39,6 +39,19 @@ jobs:
       - name: La herramienta arranca y responde (exit 0)
         run: python medir_compacts_generico.py -h
 
+      # LA SALIDA LLEVA TILDES Y NO TODAS LAS CONSOLAS SON UTF-8 (27/07/2026). El programa
+      # reconfigura stdout antes de imprimir nada; si alguien quita esa linea, un `print` con
+      # una tilde tumba la herramienta entera con UnicodeEncodeError en vez de imprimir. Aqui se
+      # fuerza el peor caso con `PYTHONIOENCODING=ascii`.
+      #
+      # Probado en verde y en rojo antes de escribirlo: con el arreglo sale con 0, y llamando al
+      # mismo parser sin pasar por el reconfigure revienta. Un paso que no sabe ponerse rojo no
+      # vigila nada.
+      - name: La salida acentuada no rompe en una consola que no es UTF-8
+        env:
+          PYTHONIOENCODING: ascii
+        run: python medir_compacts_generico.py -h
+
       # La mutacion es lo que distingue un banco de un adorno: sabotea el codigo y
       # exige que la suite se ponga roja. Sale con 1 si algun sabotaje pasa callando.
       - name: Verificacion por mutacion
