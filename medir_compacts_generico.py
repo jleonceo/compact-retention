@@ -342,7 +342,7 @@ def medir_todo(projects_dir, con_nombres=False):
 
 def imprimir(por_ventana, agregado, projects_dir):
     print("=" * 78)
-    print("COBERTURA DEL RESUMEN DE COMPACT  (leido del JSONL de sesion, reproducible)")
+    print("COBERTURA DEL RESUMEN DE COMPACT  (leída del JSONL de sesión, reproducible)")
     print("fuente: %s" % projects_dir)
     print("=" * 78)
     for d in por_ventana:
@@ -370,8 +370,8 @@ def imprimir(por_ventana, agregado, projects_dir):
         print("Nombres de fichero conservados por el resumen: banda de %d a %d."
               % (a["nombres_conservados_min"], a["nombres_conservados_max"]))
         print("Cobertura media (por nombre): %.0f%%." % a["cobertura_media_base"])
-        print("Ahi vive la tesis del TECHO: el resumen conserva un numero acotado de nombres,")
-        print("no un porcentaje fijo; cuanto mas grande la ventana, menor la fraccion.")
+        print("Ahí vive la tesis del TECHO: el resumen conserva un número acotado de nombres,")
+        print("no un porcentaje fijo; cuanto más grande la ventana, menor la fracción.")
         print()
         # ESTO NO ES DECORACION Y VA AQUI A PROPOSITO (26/07/2026). El aviso existia, pero
         # vivia en un cursor privado y en un informe, o sea en ningun sitio para quien se
@@ -380,23 +380,31 @@ def imprimir(por_ventana, agregado, projects_dir):
         # de veintitres cortes seguidos, veintidos no perdieron NADA irrecuperable. Una cifra que
         # se puede leer como dano tiene que decir que no lo es en el mismo sitio donde se
         # imprime, no en la documentacion de al lado.
-        print("QUE NO ES ESTE NUMERO: no es cuanto trabajo se pierde. Mide en cuantas cosas")
-        print("te repartias, no cuanto dano hizo el corte. Lo que protege lo que importa es")
+        print("QUÉ NO ES ESTE NÚMERO: no es cuánto trabajo se pierde. Mide en cuántas cosas")
+        print("te repartías, no cuánto daño hizo el corte. Lo que protege lo que importa es")
         print("haberlo commiteado, no que el resumen acierte a nombrarlo.")
+        print()
+        # PARA QUE SIRVE LA CIFRA. Sin esta linea el lector se queda con un numero suelto y sin
+        # nada que hacer con el. La decision que habilita es donde poner el umbral del corte, y
+        # el README trae los dos regimenes medidos aqui (292k y 585k) con sus cuatro ventanas.
+        print("PARA QUÉ SIRVE: es un termómetro comparativo, no una nota absoluta. Mide el mismo")
+        print("historial antes y después de mover el umbral del auto-compact, o un día contra")
+        print("otro. El README explica las dos variables que mueven ese umbral y qué salió al")
+        print("medirlas.")
     else:
         print("Ninguna ventana con escrituras: nada que medir en esta fuente.")
     print("-" * 78)
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Mide que sobrevive al resumen de un auto-compact.")
+    p = argparse.ArgumentParser(description="Mide qué sobrevive al resumen de un auto-compact.")
     p.add_argument("--sesion", default=None,
-                   help="UN fichero .jsonl de sesion. Es por donde se empieza: mide solo esa.")
+                   help="UN fichero .jsonl de sesión. Es por donde se empieza: mide solo esa.")
     p.add_argument("--projects-dir", default=None,
-                   help="Carpeta con los JSONL de sesion (recursivo). Por defecto, ~/.claude/projects.")
+                   help="Carpeta con los JSONL de sesión (recursivo). Por defecto, ~/.claude/projects.")
     p.add_argument("--json", action="store_true", help="Salida en JSON en vez de texto.")
     p.add_argument("--con-nombres", action="store_true",
-                   help="Incluye en el JSON los NOMBRES de fichero que el resumen perdio. Son "
+                   help="Incluye en el JSON los NOMBRES de fichero que el resumen perdió. Son "
                         "nombres de TUS documentos: no pegues esa salida en un issue sin mirarla.")
     args = p.parse_args(argv)
 
@@ -422,7 +430,7 @@ def main(argv=None):
         # pegado delante del objeto. Ademas este aviso lleva la ruta del home dentro.
         print("Sin --sesion ni --projects-dir se lee TODO tu historial de Claude Code "
               "(%s), de todos los proyectos a la vez. Son conversaciones PRIVADAS: no sale nada "
-              "de tu ordenador, pero conviene saberlo antes y no despues." % origen,
+              "de tu ordenador, pero conviene saberlo antes y no después." % origen,
               file=sys.stderr)
     if args.con_nombres:
         # El aviso va donde esta el riesgo. `--con-nombres` mete en el JSON los nombres de los
@@ -430,7 +438,7 @@ def main(argv=None):
         # un historial real se midieron 1.025, con `.env.example` entre ellos. Quien pegue esa
         # salida en un issue publica su arbol de trabajo, y tiene que saberlo en ese momento.
         print("AVISO de PRIVACIDAD: --con-nombres incluye los nombres de TUS ficheros en la "
-              "salida. Miralos antes de pegarla en ningun sitio.", file=sys.stderr)
+              "salida. Míralos antes de pegarla en ningún sitio.", file=sys.stderr)
     projects_dir = origen
 
     por_ventana, agregado = medir_todo(projects_dir, con_nombres=args.con_nombres)
@@ -443,4 +451,13 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # La salida lleva tildes y la consola de Windows no siempre viene en UTF-8. Sin esto, un
+    # `print` con una tilde tumba el programa entero con UnicodeEncodeError en vez de imprimir.
+    # Con `errors="replace"` una consola antigua enseña un signo raro, que es un mal menor
+    # comparado con una traza. Va dentro de `try` porque `reconfigure` no existe antes de 3.7.
+    for flujo in (sys.stdout, sys.stderr):
+        try:
+            flujo.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     sys.exit(main())

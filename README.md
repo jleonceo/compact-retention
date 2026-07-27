@@ -68,6 +68,74 @@ valor por defecto. No sale nada de tu ordenador, pero son conversaciones privada
 aparecen por pantalla, así que más vale que lo sepas antes de tu primera ejecución por curiosidad. El programa
 lo avisa.
 
+### La palanca: dónde cortar y por qué aquí el corte está al 60 %
+
+Claude Code compacta solo cuando la ventana está casi llena. Los cuatro cortes medidos en esta
+instalación antes de tocar nada cayeron en 997.956, 997.369, 994.163 y 970.036 tokens sobre una
+ventana de un millón, o sea al 98,7 % de ocupación. El problema no es que resuma: es que para cuando
+resume llevas mucho rato trabajando con el contexto saturado.
+
+El corte se adelanta con dos variables de entorno, ambas documentadas en
+[code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "1000000",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60"
+  }
+}
+```
+
+El porcentaje solo actúa cuando la ventana va declarada, y solo puede bajar el umbral, nunca
+subirlo. Entra al reiniciar Claude Code: la sesión en curso sigue cortando donde cortaba. Esto no es
+un hallazgo de nadie, está en la documentación oficial. Lo que aporta este repositorio es el número
+medido detrás de la elección del porcentaje.
+
+**Por qué 60 y no 30.** Con `30` el corte real cayó en 292.755 tokens; con `60`, en 585.370. La
+razón de subirlo no fue la calidad del resumen sino la del razonamiento: el modelo trabaja peor con
+el contexto muy lleno, y 600k era la estimación del borde de la zona buena en esta instalación.
+Cortar a 300k dejaba sin usar la mitad del ancho de banda aprovechable.
+
+**Y aquí es donde hace falta el medidor**, porque lo que sale no es lo que uno diría. Diecinueve
+cortes automáticos medidos con la misma vara, repartidos en los tres regímenes:
+
+```
+por defecto ~987k   n=5    conservado 56 %   nombres por ventana 23,8
+override 30 ~292k   n=4    conservado 85 %   nombres por ventana 12,0
+override 60 ~585k   n=10   conservado 66 %   nombres por ventana 26,7
+```
+
+Leído de corrido parece que doblar el umbral cuesta diecinueve puntos de conservación. No es eso lo
+que dice el dato. Esas ventanas llevaban más del doble de nombres dentro, y la variable que manda es
+esa:
+
+```
+correlación densidad (nombres distintos en la ventana) contra % conservado, n=25
+   Pearson  −0,76
+   Spearman −0,76
+```
+
+Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en el único
+tramo de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, las medias son
+65 % con el corte bajo y 71 % con el alto, o sea indistinguibles con esta muestra. La diferencia
+global mide cuánto trabajo cabía en cada ventana. El sitio del corte apenas interviene.
+
+Así que el consejo que sale del dato no es el que parecía al empezar. Adelantar el corte funciona de
+forma indirecta, porque hace que quepan menos ficheros en cada ventana. Atacar la densidad sale más
+barato y no cuesta contexto: un fichero commiteado deja de depender del resumen porque lo repone
+`git log`. La densidad del trabajo no se elige. El momento del commit sí.
+
+**Lo que cuesta adelantar el corte.** Cada sesión paga un peaje fijo antes de escribir una línea
+(prompt de sistema, herramientas, descripciones de skills y ficheros de contexto): 69.213 tokens en
+esta instalación. Con el corte por defecto eso era el 7,5 % del ciclo; con el corte en 292k pasa a
+ser el 23,6 %, porque el mismo peaje se paga 3,4 veces más a menudo. Es la razón para no bajar el
+porcentaje más de lo que pide tu caso.
+
+Las cifras de este apartado son de una instalación concreta, julio de 2026 y ventana de un millón.
+La tuya dará otras, y el medidor de este repositorio es justamente lo que hace falta para saber
+cuáles.
+
 ### Lo que puede romper esto
 
 La documentación de Claude Code dice, sobre los ficheros que esta herramienta lee, que **el formato
@@ -148,6 +216,71 @@ twenty-three cuts measured, twenty-two lost nothing that could not be recovered.
 default. Nothing leaves your machine, but these are private conversations and their names are
 printed, so it is worth knowing before the first curious run. The program says so.
 
+### The lever: where to cut and why this setup cuts at 60 %
+
+Claude Code compacts only when the window is nearly full. The four cuts measured on this install
+before changing anything landed at 997,956 · 997,369 · 994,163 · 970,036 tokens on a one-million
+window, that is at 98.7 % occupancy. The problem is not that it summarises. It is that by the time
+it does, you have been working with a saturated context for a long while.
+
+The cut is moved earlier with two environment variables, both documented at
+[code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "1000000",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60"
+  }
+}
+```
+
+The percentage only applies when the window is declared. It never raises the threshold: it lowers it
+or does nothing. It takes effect on restart, so the running session keeps cutting where it did. None of this is a discovery, it is in the official docs. What this repository adds is the
+measurement behind the choice of percentage.
+
+**Why 60 and not 30.** At `30` the real cut landed at 292,755 tokens; at `60`, at 585,370. The
+reason to raise it was not summary quality but reasoning quality: the model works worse with a very
+full context, and 600k was the estimated edge of the good zone on this install. Cutting at 300k left
+half of the usable bandwidth unused.
+
+**And this is where the measurement earns its keep**, because the result is not the intuitive one.
+Nineteen automatic cuts, same yardstick, across the three regimes:
+
+```
+default    ~987k   n=5    preserved 56 %   names per window 23.8
+override 30 ~292k  n=4    preserved 85 %   names per window 12.0
+override 60 ~585k  n=10   preserved 66 %   names per window 26.7
+```
+
+Read straight, doubling the threshold looks like it costs nineteen points. That is not what the data
+says. Those windows carried more than twice as many names. That is the variable that rules:
+
+```
+correlation between window density (distinct names) and % preserved, n=25
+   Pearson  -0.76
+   Spearman -0.76
+```
+
+Two yardsticks that do not assume the same shape of relationship point the same way. In the only
+density band where both regimes overlap, 19 to 25 names per window, the means are 65 % with the low
+cut and 71 % with the high one, indistinguishable at this sample size. The global gap measures how
+much work fitted in each window. Where the cut sat barely matters.
+
+So the advice the data supports is not the one it started from. Moving the cut earlier works
+indirectly, by letting fewer files fit in a window. Attacking density is cheaper and costs no
+context: a committed file stops depending on the summary, because `git log` brings it back. You do
+not choose how dense the work is. You do choose when to commit.
+
+**What cutting earlier costs.** Every session pays a fixed toll before writing a line (system
+prompt, tools, skill descriptions, context files): 69,213 tokens on this install. Under the default
+cut that was 7.5 % of the cycle; with the cut at 292k it becomes 23.6 %, because the same toll is
+paid 3.4 times as often. That is the reason not to lower the percentage further than your case
+needs.
+
+The figures in this section come from one install, July 2026, one-million window. Yours will differ,
+and the measurer in this repository is exactly what tells you by how much.
+
 ### What can break this
 
 The Claude Code documentation states, about the files this tool reads, that **the entry format is
@@ -194,14 +327,14 @@ python mutar.py                           # 24 sabotajes contra esos 50 casos
 ```
 
 
-El segundo comando es el que da derecho a fiarse del primero. Sabotea el codigo a proposito,
-una linea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un
-fallo del codigo: es una linea que ningun caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos.
-La primera vez que se paso, doce de dieciocho sobrevivian: se podia dejar la cobertura media
-clavada en 99 % con los veinte casos de entonces en verde.
+El segundo comando es el que da derecho a fiarse del primero. Sabotea el código a propósito, una
+línea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
+código: es una línea que ningún caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos. La
+primera vez que se pasó sobrevivían doce de dieciocho, o sea que se podía dejar la cobertura media
+clavada en el 99 % con los veinte casos de entonces en verde.
 
 ## Requisitos / Requirements
-Python 3.9+. Solo biblioteca estandar: ni pytest ni nada que instalar.
+Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar.
 Python 3.9+, standard library only: no pytest, nothing to install.
 
 ## Licencia / License

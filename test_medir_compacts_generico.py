@@ -13,9 +13,18 @@ import io
 import json
 import os
 import tempfile
+import unicodedata
 import unittest
 
 import medir_compacts_generico as m
+
+
+def _sin_tildes(texto):
+    """Quita los diacriticos para poder afirmar sobre lo que una frase dice, no sobre como se
+    escribe. Un caso que fija la cadena acentuada se pone rojo en cuanto alguien corrige una
+    tilde, y eso convierte la ortografia en un obstaculo en vez de en un arreglo."""
+    return "".join(c for c in unicodedata.normalize("NFD", texto)
+                   if unicodedata.category(c) != "Mn")
 
 
 def rec_write(*rutas):
@@ -664,11 +673,35 @@ class TestLoQueDestapoLaAuditoriaExterna(unittest.TestCase):
         buf = _io.StringIO()
         with contextlib.redirect_stdout(buf):
             m.imprimir([], agregado, "C:/no/importa")
-        salida = buf.getvalue().lower()
+        # Sin tildes y en minusculas. El texto de la herramienta las lleva, y este caso vigila lo
+        # que la frase DICE y no como se acentua: comparar la cadena literal convertia cualquier
+        # arreglo de ortografia en un test rojo, que es exactamente lo que paso al ponerlas.
+        salida = _sin_tildes(buf.getvalue().lower())
         self.assertIn("no es cuanto trabajo se pierde", salida,
                       "la salida publica una cobertura sin decir que no es dano")
         self.assertIn("commiteado", salida,
                       "la salida no dice que lo que protege es commitear")
+
+    def test_la_salida_dice_para_que_sirve_la_cifra(self):
+        """Un numero suelto no habilita ninguna decision.
+
+        La cifra sirve para comparar el mismo historial consigo mismo, tipicamente antes y despues
+        de mover el umbral del auto-compact. Eso vivia solo en el README, y quien ejecuta la
+        herramienta no siempre lo ha leido.
+        """
+        import io as _io
+        import contextlib
+        agregado = {"sesiones": 1, "ventanas": 1, "ventanas_con_escrituras": 1,
+                    "nombres_conservados_min": 3, "nombres_conservados_max": 9,
+                    "cobertura_media_base": 67.0}
+        buf = _io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            m.imprimir([], agregado, "C:/no/importa")
+        salida = _sin_tildes(buf.getvalue().lower())
+        self.assertIn("termometro comparativo", salida,
+                      "la salida no dice que la cifra solo vale comparada consigo misma")
+        self.assertIn("umbral del auto-compact", salida,
+                      "la salida no nombra la decision que la cifra habilita")
 
 
 if __name__ == "__main__":
