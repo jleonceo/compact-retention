@@ -81,11 +81,8 @@ medirlas.
 
 Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
 es: de los veintisiete cortes que este autor lleva medidos uno por uno, **veintitrés** no perdieron
-nada que no se pudiera recuperar de git o del disco.
-
-En los otros cuatro se perdió algo de verdad. Seis ficheros en total.
-
-Aquí ponía «de los veintiséis, veinticinco». Esa forma de «todos menos uno» llevaba tres versiones
+nada que no se pudiera recuperar de git o del disco. En los otros cuatro se perdió algo de verdad,
+seis ficheros en total. Aquí ponía «de los veintiséis, veinticinco». Esa forma de «todos menos uno» llevaba tres versiones
 arrastrándose sin volver a medirse. La destapó un escéptico ejecutando el medidor en vez de leer el
 texto. Cuatro sobre veintisiete sigue siendo poco, pero es cuatro veces más de lo que se publicaba.
 
@@ -102,9 +99,7 @@ picos medidos antes de tocar nada fueron 997.956, 997.369, 994.163 y 970.036, en
 99,8 % de ocupación.
 
 El problema no es que resuma. Es que para cuando resume llevas mucho rato trabajando con el
-contexto saturado.
-
-El corte se adelanta con dos variables de entorno, ambas documentadas en
+contexto saturado. El corte se adelanta con dos variables de entorno, ambas documentadas en
 [code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
 
 ```json
@@ -151,9 +146,8 @@ correlación densidad (nombres distintos en la ventana) contra % conservado, n=2
 
 Los veintiuno de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre el
 umbral. La correlación usa las veintisiete ventanas medidas, o sea esos veintiuno más seis cortes
-manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la informan.
-
-Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en la única
+manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la informan. Dos
+varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en la única
 banda de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, hay **una
 sola ventana del corte bajo, al 65 %, contra tres del alto, entre el 50 % y el 96 %**. Con esa
 muestra no se puede separar el efecto del umbral del efecto de la densidad.
@@ -328,11 +322,8 @@ the mean coverage by name, and `banda de 1 a 29` is the range of names any one s
 
 The last two paragraphs are always printed. On its own the number reads as loss. It is not: of the
 twenty-seven cuts this author has measured one by one, **twenty-three** lost nothing that could not
-be recovered from git or from disk.
-
-In the other four something was really lost. Six files in total.
-
-This used to say "of the twenty-six, twenty-five". That "all but one" shape had been dragged along
+be recovered from git or from disk. In the other four something was really lost, six files in
+total. This used to say "of the twenty-six, twenty-five". That "all but one" shape had been dragged along
 for three versions without being measured again. A skeptic caught it by running the measurer
 instead of reading the text. Four out of twenty-seven is still few, but it is four times more than
 what was being published.
@@ -347,9 +338,8 @@ Claude Code compacts only when the window is nearly full. The factory threshold 
 a margin, which on this install is 987,000 tokens out of a million, 98.7 %. The four peaks measured
 before changing anything were 997,956 · 997,369 · 994,163 · 970,036, between 97.0 % and 99.8 %
 occupancy. The problem is not that it summarises. It is that by the time it does, you have been
-working with a saturated context for a long while.
-
-The cut is moved earlier with two environment variables, both documented at
+working with a saturated context for a long while. The cut is moved earlier with two environment
+variables, both documented at
 [code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
 
 ```json
@@ -394,9 +384,8 @@ correlation between window density (distinct names) and % preserved, n=27
 
 The twenty-one in the table are the **automatic** cuts, the only ones that say anything about the
 threshold. The correlation uses all twenty-seven measured windows, those twenty-one plus six manual cuts:
-manual cuts tell you nothing about the threshold, but they do inform the density relationship.
-
-Two yardsticks that do not assume the same shape of relationship point the same way. And in the only
+manual cuts tell you nothing about the threshold, but they do inform the density relationship. Two
+yardsticks that do not assume the same shape of relationship point the same way. And in the only
 density band where both regimes overlap, 19 to 25 names per window, there is **a single window from
 the low cut, at 65 %, against three from the high one, between 50 % and 96 %**. That sample cannot
 separate the threshold effect from the density effect.
