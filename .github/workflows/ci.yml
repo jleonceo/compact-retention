@@ -13,6 +13,15 @@ name: ci
 # EJECUTADO. El fichero existia en un commit local sin subir mientras la herramienta vivia
 # dentro de otro repo, y se presento como si estuviera operando. Lo unico probado hasta
 # hoy es Python 3.14 en Windows. La primera ejecucion real sera el primer push.
+#
+# YA SE EJECUTO (27/07/2026): 9 de 9 trabajos en verde en `17b0738`, con 3.9, 3.12 y 3.14
+# sobre Windows, Linux y Mac. El aviso de arriba se queda como estaba, tachado y no
+# borrado, porque era cierto cuando se escribio y su correccion es el dato.
+#
+# Y la leccion vale mas que el aviso: una nota de humildad tambien caduca, y esta caduco
+# EN LA DIRECCION QUE HACE PARECER EL REPOSITORIO PEOR DE LO QUE ES. Un documento que
+# narra su propio estado hay que volver a medirlo en cada commit, no solo cuando se
+# sospecha que exagera. Lo cazo una revision ciega el mismo dia, no yo.
 
 on:
   push:

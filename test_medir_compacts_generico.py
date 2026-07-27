@@ -464,6 +464,58 @@ class TestLaCapaQueElUsuarioEjECUTA(BaseDir):
         cod, _, _ = self._correr("--sesion", ruta)
         self.assertEqual(cod, 0)
 
+    def test_una_carpeta_sin_una_sola_sesion_lo_dice(self):
+        """La otra mitad, que se quedo fuera (27/07/2026).
+
+        Los cuatro casos de arriba vigilan `--sesion`. Por `--projects-dir` el mismo `notas.txt`
+        era invisible: la carpeta se recorria, no aparecia ni un `.jsonl`, y la salida era la de
+        "aqui no hay cortes" con codigo 0. El mismo fichero, dos veredictos opuestos segun por
+        que puerta entrara. Lo cazo una revision ciega del repositorio ya publicado.
+        """
+        carpeta = os.path.join(self.tmp, "no_es_projects")
+        os.makedirs(os.path.join(carpeta, "dentro"))
+        for ruta in ("notas.txt", os.path.join("dentro", "otro.md")):
+            with io.open(os.path.join(carpeta, ruta), "w", encoding="utf-8") as fh:
+                fh.write("esto no es una sesion\n")
+        cod, salida, _ = self._correr("--projects-dir", carpeta)
+        self.assertEqual(cod, 2)
+        self.assertIn("ninguno es un .jsonl", salida)
+
+    def test_projects_dir_apuntando_a_un_FICHERO_se_rechaza(self):
+        """La simetria con `test_sesion_apuntando_a_una_carpeta_se_rechaza`, que no existia.
+
+        El mismo `notas.txt` era "esto no es un .jsonl" por `--sesion` y una tabla de ceros con
+        codigo 0 por `--projects-dir`. El lector que acertaba la bandera se enteraba de su error;
+        el que no, concluia que no tenia cortes.
+        """
+        ruta = os.path.join(self.tmp, "notas.txt")
+        with io.open(ruta, "w", encoding="utf-8") as fh:
+            fh.write("esto no es una sesion\n")
+        cod, salida, _ = self._correr("--projects-dir", ruta)
+        self.assertEqual(cod, 2)
+        self.assertIn("espera una carpeta", salida)
+
+    def test_una_carpeta_MIXTA_no_se_bloquea(self):
+        """Control negativo del de arriba, y no es adorno: la comprobacion exige que TODOS los
+        ficheros fallen. Si se escribiera con "alguno", una carpeta de sesiones con un `.gitignore`
+        dentro dejaria de medirse."""
+        carpeta = os.path.join(self.tmp, "projects_con_ruido")
+        os.makedirs(carpeta)
+        with io.open(os.path.join(carpeta, "notas.txt"), "w", encoding="utf-8") as fh:
+            fh.write("ruido\n")
+        with io.open(os.path.join(carpeta, "s.jsonl"), "w", encoding="utf-8") as fh:
+            fh.write('{"type":"user","message":{"content":"hola"}}\n')
+        cod, _, _ = self._correr("--projects-dir", carpeta)
+        self.assertEqual(cod, 0)
+
+    def test_una_carpeta_VACIA_sigue_saliendo_con_cero(self):
+        """Segundo control. Ausencia de dato legitima: no hay nada que mirar no es lo mismo que
+        hay cosas y ninguna es lo que buscas."""
+        carpeta = os.path.join(self.tmp, "projects_vacia")
+        os.makedirs(carpeta)
+        cod, _, _ = self._correr("--projects-dir", carpeta)
+        self.assertEqual(cod, 0)
+
     def test_la_demo_funciona_sin_historial_propio(self):
         """`--demo` existe porque quien no usa Claude Code no tenia nada que mirar: su primera
         ejecucion era un bloque de ceros. La demo anuncia 2 de 3 y tiene que sacar 2 de 3."""
@@ -471,6 +523,16 @@ class TestLaCapaQueElUsuarioEjECUTA(BaseDir):
         self.assertEqual(cod, 0)
         self.assertIn("2 de 3", salida, "la demo promete 2 de 3 en su cabecera")
         self.assertIn("notas_sueltas.txt", salida, "dice cual es el que se pierde")
+
+    def test_la_demo_en_modo_maquina_devuelve_JSON_de_verdad(self):
+        """`--demo --json` aceptaba la bandera y la tiraba: la rama de la demo retornaba antes de
+        llegar a la de JSON. Una bandera admitida que no hace nada es peor que una rechazada, y en
+        stdout salia una tabla de pantalla donde el que encadena espera un objeto."""
+        cod, salida, _ = self._correr("--demo", "--json")
+        self.assertEqual(cod, 0)
+        datos = json.loads(salida)
+        self.assertIn("ventanas", datos, "la clave tiene que ser la MISMA que la salida real")
+        self.assertIn("agregado", datos)
 
 class TestHuecosQueDestapoLaMutacion(BaseDir):
     """Siete lineas que el banco no vigilaba, cada una con su caso.

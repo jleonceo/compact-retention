@@ -440,12 +440,27 @@ def main(argv=None):
             with io.open(ruta, "w", encoding="utf-8", newline="\n") as fh:
                 for fila in filas:
                     fh.write(json.dumps(fila, ensure_ascii=False) + "\n")
-            print("DEMO: sesion de juguete con 3 ficheros escritos, 1 commit y 1 identificador.")
-            print("      El resumen nombra dos de los tres ficheros, asi que la cobertura por")
-            print("      nombre tiene que salir 2 de 3. Lo que falta, `notas_sueltas.txt`.")
-            print()
+            # `--demo --json` SE ACEPTABA Y SE TIRABA (27/07/2026). Esta rama retornaba antes de
+            # llegar a la de JSON, asi que quien pidiera las dos recibia la tabla de pantalla y un
+            # codigo 0: una bandera admitida que no hacia nada, que es peor que rechazarla. Lo cazo
+            # una revision ciega. La narracion se va a stderr por el mismo motivo que el aviso de
+            # privacidad de mas abajo: en modo maquina, stdout tiene que ser JSON y nada mas.
+            salida = sys.stderr if args.json else sys.stdout
+            print("DEMO: sesion de juguete con 3 ficheros escritos, 1 commit y 1 identificador.",
+                  file=salida)
+            print("      El resumen nombra dos de los tres ficheros, asi que la cobertura por",
+                  file=salida)
+            print("      nombre tiene que salir 2 de 3. Lo que falta, `notas_sueltas.txt`.",
+                  file=salida)
+            print(file=salida)
             por_ventana, agregado = medir_todo(ruta, con_nombres=False)
-            imprimir(por_ventana, agregado, ruta)
+            if args.json:
+                # La clave es `ventanas`, la MISMA que la salida real de mas abajo. Un demo que
+                # devuelve otro esquema entrena al lector contra su propia herramienta.
+                print(json.dumps({"ventanas": por_ventana, "agregado": agregado},
+                                 ensure_ascii=False, indent=2))
+            else:
+                imprimir(por_ventana, agregado, ruta)
             return 0
         finally:
             shutil.rmtree(carpeta, ignore_errors=True)
@@ -461,6 +476,14 @@ def main(argv=None):
         return 2
     if args.sesion and not os.path.isfile(origen):
         print("--sesion espera un fichero .jsonl. Para una carpeta entera usa --projects-dir.")
+        return 2
+    # LA SIMETRIA QUE FALTABA. `--sesion` lleva desde el 27/07 rechazando una carpeta, y
+    # `--projects-dir` seguia tragando un fichero suelto: apuntarlo a `notas.txt` daba la tabla de
+    # ceros con codigo 0. O sea que EL MISMO error del lector recibia diagnostico o silencio segun
+    # cual de las dos banderas hubiera acertado. Las dos comprobaciones se escribieron con dias de
+    # diferencia y ninguna miro a su hermana.
+    if args.projects_dir and not os.path.isdir(origen):
+        print("--projects-dir espera una carpeta. Para un fichero suelto usa --sesion.")
         return 2
 
     # EL FICHERO EQUIVOCADO TIENE QUE DECIRLO (27/07/2026). Antes, apuntar `--sesion` a un
@@ -490,6 +513,26 @@ def main(argv=None):
             print("%s tiene contenido pero ninguna línea es JSON válido: no parece un JSONL de "
                   "sesión." % os.path.basename(origen))
             return 2
+    # Y LA MITAD QUE FALTABA (27/07/2026). El arreglo de arriba se hizo solo para `--sesion` y una
+    # segunda revision ciega lo cazo: apuntar `--projects-dir` a una carpeta llena de ficheros que
+    # no son sesiones seguia diciendo "aqui no hay cortes", con codigo 0. El mismo fichero era "no
+    # es un JSONL de sesion" por una via e invisible por la otra.
+    #
+    # Una carpeta vacia SI sale con 0 a proposito: eso es ausencia de dato legitima. Lo que se
+    # separa es "no hay nada" de "hay cosas y ninguna es lo que buscas".
+    if args.projects_dir and os.path.isdir(origen):
+        hay = falsos = 0
+        for raiz, _, ficheros in os.walk(origen):
+            for f in ficheros:
+                hay += 1
+                if not f.lower().endswith(".jsonl"):
+                    falsos += 1
+        if hay and falsos == hay:
+            print("En %s hay %d fichero(s) y ninguno es un .jsonl. Las sesiones de Claude Code "
+                  "terminan en .jsonl: esto no es una carpeta de sesiones, o esta es la carpeta "
+                  "equivocada. No es un cero, es que no se pudo mirar." % (origen, hay))
+            return 2
+
     if not args.sesion and not args.projects_dir:
         # A stderr, y no es cosmetico: iba a stdout por delante del JSON y la salida en modo
         # maquina dejaba de ser JSON. Quien encadenara esto con otra cosa recibia un aviso

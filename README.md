@@ -511,19 +511,26 @@ figure. The truth sits between them, which is why both numbers ship.
 
 ## Tests
 ```bash
-python test_medir_compacts_generico.py    # 56 casos
-python mutar.py                           # 24 sabotajes contra esos 56 casos
+python test_medir_compacts_generico.py    # 61 casos
+python mutar.py                           # 28 sabotajes contra esos 61 casos
 ```
 
 
 El segundo comando es el que da derecho a fiarse del primero. Sabotea el código a propósito, una
 línea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
-código: es una línea que ningún caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos.
+código: es una línea que ningún caso vigila. Hoy son veintiocho de veintiocho, cero huecos.
+
+Y hay un sabotaje número veintinueve que **tiene que salir hueco**: alarga un comentario y no cambia
+ni una decisión del programa. Es el control negativo del propio arnés, y va dentro del bucle, con la
+copia de seguridad puesta, para que sufra exactamente lo mismo que los otros veintiocho. Sin él, un
+arnés que solo sabe decir «cazada» no demuestra que ve: puede estar poniendo la suite en rojo por un
+motivo suyo y firmar un pleno. Le pasó al repositorio hermano, y lo encontró una auditoría de fuera
+porque aquí todos los verificadores son el objeto verificado.
 
 *El origen de este banco está escrito en la cabecera de `mutar.py`: el 25/07/2026 un escéptico pasó
 dieciocho mutaciones a mano contra una suite de veinte casos y **sobrevivieron doce**. Se podía dejar
 la cobertura clavada en el 99 %, o borrar el aviso de privacidad que este README promete, con los
-veinte casos en verde. De ahí salen los veinticuatro sabotajes de hoy.*
+veinte casos en verde. De ahí salen los veintiocho sabotajes de hoy.*
 
 *Y una corrección sobre la corrección. Este párrafo llegó a decir que esa frase «no se ha podido
 anclar a ningún artefacto de este repositorio» y que se retiraba por eso. Era falso: el artefacto es
@@ -532,10 +539,17 @@ el 27/07 abriendo el fichero. Retirar una afirmación porque no se encuentra su 
 mirado dentro del propio paquete, es el mismo error que retirarla tarde.*
 
 ## Requisitos / Requirements
-Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está declarado, no
-certificado: lo único ejecutado hasta hoy es Python 3.14 en Windows, y la matriz de CI dice lo mismo.
-Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is declared, not
-certified: the only thing run so far is Python 3.14 on Windows, and the CI matrix says so too.
+Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está **certificado**
+desde el 27/07/2026: nueve trabajos en verde, con 3.9, 3.12 y 3.14 sobre Windows, Linux y Mac.
+Hasta esa mañana aquí ponía «declarado, no certificado», y era cierto. Dejó de serlo con el primer
+push y siguió publicado unas horas: una nota de humildad caduca igual que una cifra, y esta caducó
+en la dirección que hace parecer el repositorio peor de lo que es.
+
+Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is **certified** as of
+27/07/2026: nine green jobs across 3.9, 3.12 and 3.14 on Windows, Linux and Mac. Until that morning
+this line read «declared, not certified», which was true. It stopped being true on the first push
+and stayed up for a few hours: a note of humility goes stale like any other figure, and this one
+went stale in the direction that makes the repository look worse than it is.
 
 ## Licencia / License
 MIT. Ver [LICENSE](LICENSE).

@@ -72,6 +72,18 @@ MUTACIONES = [
     ("--sesion apuntando a una carpeta deja de rechazarse",
      "    if args.sesion and not os.path.isfile(origen):",
      "    if False:"),
+    ("--projects-dir apuntando a un fichero suelto deja de rechazarse",
+     "    if args.projects_dir and not os.path.isdir(origen):",
+     "    if False:"),
+    ("la demo en modo maquina vuelve a escupir su narracion por stdout",
+     "            salida = sys.stderr if args.json else sys.stdout",
+     "            salida = sys.stdout"),
+    ("--projects-dir sobre una carpeta sin sesiones deja de rechazarse",
+     "        if hay and falsos == hay:",
+     "        if False:"),
+    ("la carpeta sin sesiones se rechaza aunque tenga alguna",
+     "        if hay and falsos == hay:",
+     "        if hay and falsos:"),
     ("el hash de commit se reconoce desde 6 hex en vez de 7",
      r'(?:[0-9a-f]{40}|[0-9a-f]{7,12})',
      r'(?:[0-9a-f]{40}|[0-9a-f]{6,12})'),
@@ -165,6 +177,7 @@ def main(argv=None):
     def como_el_fichero(txt):
         return txt.replace(NL, SALTO) if SALTO != NL else txt
     cazadas = huecos = sin_aplicar = 0
+    nulo_ok = None
     print("=" * 78)
     print("VERIFICACION POR MUTACION  --  %d sabotajes contra el banco" % len(MUTACIONES))
     print("=" * 78)
@@ -185,6 +198,27 @@ def main(argv=None):
                 huecos += 1
                 print("  %-56s *** HUECO ***" % desc[:56])
             io.open(MEDIDO, "w", encoding="utf-8", newline="").write(original)
+
+        # CONTROL NEGATIVO DEL PROPIO ARNES (27/07/2026). Los 26 sabotajes de arriba solo saben
+        # decir "cazada". Un arnes que jamas dice lo contrario no demuestra que ve: puede estar
+        # poniendo el banco rojo por un motivo suyo -- una copia en disco, una variable de entorno,
+        # un import roto -- y salir con el mismo pleno. Le paso al repositorio hermano, donde un
+        # guardian anadido despues dejaba el banco rojo durante TODAS las pasadas y el contador de
+        # huecos era inalcanzable por construccion. Lo encontro una auditoria externa, porque aqui
+        # todos los gates son el objeto medido.
+        #
+        # Este cambio no altera ni una decision del programa: alarga un comentario. Tiene que salir
+        # HUECO. Si sale cazada, el banco esta reaccionando a otra cosa y las 26 no valen nada.
+        #
+        # Va DENTRO del try, con el residuo todavia en disco, porque tiene que sufrir exactamente
+        # las mismas condiciones que las mutaciones reales. Escrito fuera probaria otro escenario.
+        marca = "# -*- coding: utf-8 -*-"
+        if marca in original:
+            io.open(MEDIDO, "w", encoding="utf-8", newline="").write(
+                original.replace(marca, marca + "   # control nulo del arnes", 1))
+            nulo_ok = subprocess.run([sys.executable, BANCO], capture_output=True,
+                                     cwd=AQUI).returncode == 0
+            io.open(MEDIDO, "w", encoding="utf-8", newline="").write(original)
     finally:
         io.open(MEDIDO, "w", encoding="utf-8", newline="").write(original)
         if os.path.exists(RESIDUO):
@@ -196,7 +230,12 @@ def main(argv=None):
         print("  Un hueco no es un fallo del codigo: es una linea que el banco no vigila.")
     if sin_aplicar:
         print("  'Sin aplicar' tampoco es aprobado: esas lineas se quedaron sin probar.")
-    return 1 if (huecos or sin_aplicar) else 0
+    if nulo_ok is True:
+        print("  control nulo: HUECO, que es lo correcto -- el arnes distingue.")
+    elif nulo_ok is False:
+        print("  control nulo: CAZADA. El arnes esta CIEGO: pone el banco rojo por algo que no")
+        print("  es el sabotaje, asi que las %d de arriba no prueban nada." % cazadas)
+    return 1 if (huecos or sin_aplicar or nulo_ok is False) else 0
 
 
 if __name__ == "__main__":
