@@ -116,6 +116,11 @@ correlación densidad (nombres distintos en la ventana) contra % conservado, n=2
    Spearman −0,76
 ```
 
+Los diecinueve de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre
+el umbral. La correlación usa las veinticinco ventanas medidas, o sea esos diecinueve más seis
+cortes manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la
+informan.
+
 Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en el único
 tramo de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, las medias son
 65 % con el corte bajo y 71 % con el alto, o sea indistinguibles con esta muestra. La diferencia
@@ -262,6 +267,10 @@ correlation between window density (distinct names) and % preserved, n=25
    Spearman -0.76
 ```
 
+The nineteen in the table are the **automatic** cuts, the only ones that say anything about the
+threshold. The correlation uses all twenty-five measured windows, those nineteen plus six manual
+cuts: manual cuts tell you nothing about the threshold, but they do inform the density relationship.
+
 Two yardsticks that do not assume the same shape of relationship point the same way. In the only
 density band where both regimes overlap, 19 to 25 names per window, the means are 65 % with the low
 cut and 71 % with the high one, indistinguishable at this sample size. The global gap measures how
@@ -322,8 +331,8 @@ figure. The truth sits between them, which is why both numbers ship.
 
 ## Tests
 ```bash
-python test_medir_compacts_generico.py    # 50 casos
-python mutar.py                           # 24 sabotajes contra esos 50 casos
+python test_medir_compacts_generico.py    # 51 casos
+python mutar.py                           # 24 sabotajes contra esos 51 casos
 ```
 
 
