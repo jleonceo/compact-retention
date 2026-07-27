@@ -295,6 +295,25 @@ def sesiones_en(projects_dir):
     return sorted(encontrados)
 
 
+def _tiene_json(ruta):
+    """Al menos una linea del fichero parsea como JSON. La comprobacion que ya existia para
+    `--sesion`, sacada a funcion para que las DOS banderas usen el mismo predicado en vez de
+    cada una el suyo."""
+    try:
+        with io.open(ruta, encoding="utf-8", errors="replace") as fh:
+            for linea in fh:
+                if not linea.strip():
+                    continue
+                try:
+                    json.loads(linea)
+                    return True
+                except Exception:
+                    continue
+    except Exception:
+        return False
+    return False
+
+
 def autodetectar_projects_dir():
     """~/.claude/projects si existe. El lector puede pasar el suyo con --projects-dir."""
     cand = os.path.expanduser(os.path.join("~", ".claude", "projects"))
@@ -525,13 +544,24 @@ def main(argv=None):
     #
     # Una carpeta vacia SI sale con 0 a proposito: eso es ausencia de dato legitima. Lo que se
     # separa es "no hay nada" de "hay cosas y ninguna es lo que buscas".
+    # Y EL TERCER PISO DEL MISMO DEFECTO (27/07/2026). Primero se arreglo la EXTENSION en las dos
+    # banderas, luego las MAYUSCULAS en las cuatro comprobaciones, y quedaba el CONTENIDO: un
+    # `sesion_falsa.jsonl` lleno de basura era "ninguna linea es JSON valido" por `--sesion` y una
+    # tabla de ceros con codigo 0 por `--projects-dir`. Tres rondas para el mismo predicado en dos
+    # sitios. La leccion no es el arreglo: es que un defecto se cierra en la SUPERFICIE donde vive,
+    # no en el camino donde se noto, y esta es la cuarta vez que este repositorio lo paga.
     if args.projects_dir and os.path.isdir(origen):
-        hay = falsos = 0
+        hay = falsos = vacios = 0
         for raiz, _, ficheros in os.walk(origen):
             for f in ficheros:
                 hay += 1
+                ruta = os.path.join(raiz, f)
                 if not f.lower().endswith(".jsonl"):
                     falsos += 1
+                elif os.path.getsize(ruta) > 0 and not _tiene_json(ruta):
+                    falsos += 1          # se llama .jsonl y por dentro no lo es
+                elif os.path.getsize(ruta) == 0:
+                    vacios += 1          # un fichero vacio no acusa a nadie
         if hay and falsos == hay:
             print("En %s hay %d fichero(s) y ninguno es un .jsonl. Las sesiones de Claude Code "
                   "terminan en .jsonl: esto no es una carpeta de sesiones, o esta es la carpeta "
