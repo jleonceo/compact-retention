@@ -43,25 +43,31 @@ Deja las comillas de la ruta: el nombre de la carpeta lo genera Claude Code a pa
 directorio de trabajo y puede traer espacios. Para medir una carpeta entera de golpe,
 `--projects-dir`.
 
-Lo que devuelve. Esta salida es la del **26/07/2026** sobre un historial real; el tuyo dará otros
+Lo que devuelve. Esta salida es la del **27/07/2026** sobre un historial real; el tuyo dará otros
 números, y el mío también dentro de una semana, porque el historial crece con cada sesión:
 
 ```
 ------------------------------------------------------------------------------
-AGREGADO: 50 sesiones, 149 ventanas (145 con escrituras).
+AGREGADO: 51 sesiones, 152 ventanas (148 con escrituras).
 Nombres de fichero conservados por el resumen: banda de 1 a 29.
 Cobertura media (por nombre): 67%.
-Ahi vive la tesis del TECHO: el resumen conserva un numero acotado de nombres,
-no un porcentaje fijo; cuanto mas grande la ventana, menor la fraccion.
+Ahí vive la tesis del TECHO: el resumen conserva un número acotado de nombres,
+no un porcentaje fijo; cuanto más grande la ventana, menor la fracción.
 
-QUE NO ES ESTE NUMERO: no es cuanto trabajo se pierde. Mide en cuantas cosas
-te repartias, no cuanto dano hizo el corte. Lo que protege lo que importa es
+QUÉ NO ES ESTE NÚMERO: no es cuánto trabajo se pierde. Mide en cuántas cosas
+te repartías, no cuánto daño hizo el corte. Lo que protege lo que importa es
 haberlo commiteado, no que el resumen acierte a nombrarlo.
+
+PARA QUÉ SIRVE: es un termómetro comparativo, no una nota absoluta. Mide el mismo
+historial antes y después de mover el umbral del auto-compact, o un día contra
+otro. El README explica las dos variables que mueven ese umbral y qué salió al
+medirlas.
 ------------------------------------------------------------------------------
 ```
 
-Ese último párrafo sale siempre, y está ahí porque la cifra se lee sola como pérdida. No lo es. De
-veintitrés cortes medidos, veintidós no perdieron nada que no se pudiera recuperar.
+Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
+es: de los veintiséis cortes que este autor lleva medidos uno por uno, veinticinco no perdieron nada
+que no se pudiera recuperar de git o del disco.
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
@@ -70,10 +76,11 @@ lo avisa.
 
 ### La palanca: dónde cortar y por qué aquí el corte está al 60 %
 
-Claude Code compacta solo cuando la ventana está casi llena. Los cuatro cortes medidos en esta
-instalación antes de tocar nada cayeron en 997.956, 997.369, 994.163 y 970.036 tokens sobre una
-ventana de un millón, o sea al 98,7 % de ocupación. El problema no es que resuma: es que para cuando
-resume llevas mucho rato trabajando con el contexto saturado.
+Claude Code compacta solo cuando la ventana está casi llena. El umbral de fábrica es la ventana
+menos un margen, que en esta instalación son 987.000 tokens sobre un millón, el 98,7 %. Los cuatro
+picos medidos antes de tocar nada fueron 997.956, 997.369, 994.163 y 970.036, entre el 97,0 % y el
+99,8 % de ocupación. El problema no es que resuma: es que para cuando resume llevas mucho rato
+trabajando con el contexto saturado.
 
 El corte se adelanta con dos variables de entorno, ambas documentadas en
 [code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
@@ -92,54 +99,67 @@ subirlo. Entra al reiniciar Claude Code: la sesión en curso sigue cortando dond
 un hallazgo de nadie, está en la documentación oficial. Lo que aporta este repositorio es el número
 medido detrás de la elección del porcentaje.
 
-**Por qué 60 y no 30.** Con `30` el corte real cayó en 292.755 tokens; con `60`, en 585.370. La
-razón de subirlo no fue la calidad del resumen sino la del razonamiento: el modelo trabaja peor con
-el contexto muy lleno, y 600k era la estimación del borde de la zona buena en esta instalación.
-Cortar a 300k dejaba sin usar la mitad del ancho de banda aprovechable.
+**Por qué 60 y no 30.** Con `30` los cortes cayeron entre 292.755 y 294.027 tokens; con `60`, entre
+580.370 y 588.381. La razón de subirlo no fue la calidad del resumen sino la del razonamiento: el
+modelo trabaja peor con el contexto muy lleno, y 600k era la estimación del borde de la zona buena
+en esta instalación. Cortar a 300k dejaba sin usar la mitad del ancho de banda aprovechable.
 
-**Y aquí es donde hace falta el medidor**, porque lo que sale no es lo que uno diría. Diecinueve
-cortes automáticos medidos con la misma vara, repartidos en los tres regímenes:
-
-```
-por defecto ~987k   n=5    conservado 56 %   nombres por ventana 23,8
-override 30 ~292k   n=4    conservado 85 %   nombres por ventana 12,0
-override 60 ~585k   n=10   conservado 66 %   nombres por ventana 26,7
-```
-
-Leído de corrido parece que doblar el umbral cuesta diecinueve puntos de conservación. No es eso lo
-que dice el dato. Esas ventanas llevaban más del doble de nombres dentro, y la variable que manda es
-esa:
+**Y aquí es donde hace falta el medidor**, porque lo que sale no es lo que uno diría. Veinte cortes
+automáticos medidos con la misma vara, repartidos en los tres regímenes:
 
 ```
-correlación densidad (nombres distintos en la ventana) contra % conservado, n=25
+por defecto ~987k   n=4    conservado 46 %   nombres por ventana 29,0
+override 30 ~292k   n=5    conservado 88 %   nombres por ventana 10,2
+override 60 ~585k   n=11   conservado 63 %   nombres por ventana 27,0
+```
+
+Leído de corrido parece que doblar el umbral cuesta veinticinco puntos de conservación. No es eso lo
+que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro, y la variable que manda
+es esa:
+
+```
+correlación densidad (nombres distintos en la ventana) contra % conservado, n=26
    Pearson  −0,76
    Spearman −0,76
 ```
 
-Los diecinueve de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre
-el umbral. La correlación usa las veinticinco ventanas medidas, o sea esos diecinueve más seis
-cortes manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la
-informan.
+Los veinte de la tabla son los cortes **automáticos**, que son los únicos que dicen algo sobre el
+umbral. La correlación usa las veintiséis ventanas medidas, o sea esos veinte más seis cortes
+manuales: al umbral no lo tocan, y a la relación entre densidad y conservación sí la informan.
 
-Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en el único
-tramo de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, las medias son
-65 % con el corte bajo y 71 % con el alto, o sea indistinguibles con esta muestra. La diferencia
-global mide cuánto trabajo cabía en cada ventana. El sitio del corte apenas interviene.
+Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en la única
+banda de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, hay **una
+sola ventana del corte bajo, al 65 %, contra tres del alto, entre el 50 % y el 96 %**. Con esa
+muestra no se puede separar el efecto del umbral del efecto de la densidad, y decirlo así importa:
+la versión anterior de este párrafo llamaba «medias» a un dato de una ventana frente a otro de tres.
+
+**Una cifra de esta tabla estuvo mal publicada y conviene saber por qué.** La ventana del 24/07 a
+las 10:52 estaba contada en el régimen por defecto, y su corte real fue de 292.789 tokens, o sea
+override 30. La causa: las etiquetas de las demás filas llevan su corte escrito y esa no, así que
+al agrupar por etiqueta se fue al grupo equivocado. Con ella en su sitio, el régimen por defecto
+pasa de 56 % a 46 % y el bajo de 85 % a 88 %. **La tesis no se cae, se refuerza**, y el fallo lo
+encontró un revisor cruzando la etiqueta contra la bitácora. El instrumento no lo vio.
 
 Así que el consejo que sale del dato no es el que parecía al empezar. Adelantar el corte funciona de
 forma indirecta, porque hace que quepan menos ficheros en cada ventana. Atacar la densidad sale más
 barato y no cuesta contexto: un fichero commiteado deja de depender del resumen porque lo repone
 `git log`. La densidad del trabajo no se elige. El momento del commit sí.
 
-**Lo que cuesta adelantar el corte.** Cada sesión paga un peaje fijo antes de escribir una línea
-(prompt de sistema, herramientas, descripciones de skills y ficheros de contexto): 69.213 tokens en
-esta instalación. Con el corte por defecto eso era el 7,5 % del ciclo; con el corte en 292k pasa a
-ser el 23,6 %, porque el mismo peaje se paga 3,4 veces más a menudo. Es la razón para no bajar el
-porcentaje más de lo que pide tu caso.
+**Lo que cuesta adelantar el corte.** Cada ciclo paga un peaje fijo antes de escribir una línea
+(prompt de sistema, herramientas, descripciones de skills y ficheros de contexto): 69.213 tokens
+medidos el 23/07/2026, y entre 70.000 y 71.000 en las últimas diez sesiones. Sobre el corte por
+defecto eso es el 7,0 %; sobre un corte en 292k pasa a ser el 23,6 %, porque el mismo peaje se paga
+3,4 veces más a menudo. Es la razón para no bajar el porcentaje más de lo que pide tu caso.
 
 Las cifras de este apartado son de una instalación concreta, julio de 2026 y ventana de un millón.
-La tuya dará otras, y el medidor de este repositorio es justamente lo que hace falta para saber
-cuáles.
+La tuya dará otras.
+
+**Y hay que decir qué de esto puedes reproducir tú.** El script que viaja en este repositorio mide
+la cobertura del resumen y nada más. La tabla de regímenes, la correlación con la densidad y el
+peaje de arranque salen de otros dos medidores que viven en la instalación del autor y **no se
+publican aquí**: son reproducibles en método, aunque no en un comando. Lo que sí ejecutas tal cual es
+`medir_compacts_generico.py` sobre tu propio historial, que es lo que te dice si tu instalación se
+comporta como esta.
 
 ### Cómo se midió: la parte reutilizable
 
@@ -165,13 +185,17 @@ predicción falló por un 0,8 %** y quedó escrita en su sitio. Una predicción 
 ver el dato no es una predicción.
 
 **4. Refutar la hipótesis rival antes de celebrar la propia.** Existe un mecanismo documentado que,
-de estar actuando aquí, habría invalidado el trabajo entero. Se descartó con dato propio: actúa
-sobre el 90 % de ocupación y los cuatro cortes medidos caían en el 98,7 %.
+de estar actuando aquí, habría invalidado el trabajo entero: uno que recorta el contexto al llegar
+al 90 % de ocupación. Se descartó con dato propio, y el argumento importa entero: los cortes no
+caían a un porcentaje cualquiera, sino **exactamente en la ventana menos un margen fijo**, que es la
+firma de un umbral por buffer y no la de ese mecanismo. Con la mitad del argumento (el 90 % contra
+el 98,7 %) la conclusión ni siquiera se sostiene.
 
 **5. Publicar la corrección encima de la versión anterior, sin borrarla.** Con siete ventanas medidas
 la conclusión era que el resumen tiene un techo fijo de nueve a diecisiete nombres, pasara lo que
-pasara. Con diecinueve se cayó: dos ventanas conservaron 21 y 28. Con veinticinco, la variable que
-manda resultó ser la densidad. La tesis del techo estaba escrita y publicada, y sigue escrita al
+pasara. Se ensanchó a diez-veinte al llegar la octava ventana, y con diecinueve se cayó del todo:
+cuatro pasaban de diecisiete, dos de ellas con 21 y 28. Con veintiséis, la variable que manda
+resultó ser la densidad. La tesis del techo estaba escrita y publicada, y sigue escrita al
 lado de lo que la corrige, porque un registro que borra sus versiones anteriores no enseña cómo se
 corrige una medición.
 
@@ -207,8 +231,8 @@ números:
 ### Los límites que debes conocer
 
 **Un corte no es una aparición.** El JSONL reescribe el mismo mensaje de resumen una vez por cada
-turno posterior: entre dos copias solo cambia un identificador interno. Sobre un historial real se
-contaron **230 apariciones para 149 cortes**, un 54 % de inflado repartido en 22 ficheros. Esta
+turno posterior: entre dos copias solo cambia un identificador interno. Sobre un historial real, medido el
+27/07/2026, hay **233 apariciones para 152 cortes**, un 53 % de inflado repartido en 22 ficheros. Esta
 herramienta las deduplica; si escribes la tuya, ese es el primer sitio donde se tuerce la cifra.
 
 **Las escrituras de subagente engordan el denominador.** Un agente lanzado en paralelo escribe
@@ -252,11 +276,14 @@ ones you have, run `ls ~/.claude/projects`. Keep the quotes around the path: Cla
 folder name from your working directory and it can contain spaces. To measure a whole folder at
 once, use `--projects-dir`.
 
-What it prints is the output of **26 July 2026** on one real history. Yours will differ, and so will
-mine next week, because the history grows with every session.
+What it prints is shown in the Spanish half above, dated **27 July 2026** on one real history: the
+program prints in Spanish, so the block is not duplicated here. Yours will differ, and so will mine
+next week, because the history grows with every session. Two lines to read it: `Cobertura media` is
+the mean coverage by name, and `banda de 1 a 29` is the range of names any one summary kept.
 
-That last paragraph is always printed. On its own the number reads as loss. It is not. Of
-twenty-three cuts measured, twenty-two lost nothing that could not be recovered.
+The last two paragraphs are always printed. On its own the number reads as loss. It is not: of the
+twenty-six cuts this author has measured one by one, twenty-five lost nothing that could not be
+recovered from git or from disk.
 
 **With no arguments it reads your ENTIRE history**, every project at once, because that is the
 default. Nothing leaves your machine, but these are private conversations and their names are
@@ -264,10 +291,11 @@ printed, so it is worth knowing before the first curious run. The program says s
 
 ### The lever: where to cut and why this setup cuts at 60 %
 
-Claude Code compacts only when the window is nearly full. The four cuts measured on this install
-before changing anything landed at 997,956 · 997,369 · 994,163 · 970,036 tokens on a one-million
-window, that is at 98.7 % occupancy. The problem is not that it summarises. It is that by the time
-it does, you have been working with a saturated context for a long while.
+Claude Code compacts only when the window is nearly full. The factory threshold is the window minus
+a margin, which on this install is 987,000 tokens out of a million, 98.7 %. The four peaks measured
+before changing anything were 997,956 · 997,369 · 994,163 · 970,036, between 97.0 % and 99.8 %
+occupancy. The problem is not that it summarises. It is that by the time it does, you have been
+working with a saturated context for a long while.
 
 The cut is moved earlier with two environment variables, both documented at
 [code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
@@ -285,51 +313,65 @@ The percentage only applies when the window is declared. It never raises the thr
 or does nothing. It takes effect on restart, so the running session keeps cutting where it did. None of this is a discovery, it is in the official docs. What this repository adds is the
 measurement behind the choice of percentage.
 
-**Why 60 and not 30.** At `30` the real cut landed at 292,755 tokens; at `60`, at 585,370. The
-reason to raise it was not summary quality but reasoning quality: the model works worse with a very
-full context, and 600k was the estimated edge of the good zone on this install. Cutting at 300k left
-half of the usable bandwidth unused.
+**Why 60 and not 30.** At `30` the cuts landed between 292,755 and 294,027 tokens; at `60`, between
+580,370 and 588,381. The reason to raise it was not summary quality but reasoning quality: the model
+works worse with a very full context, and 600k was the estimated edge of the good zone on this
+install. Cutting at 300k left half of the usable bandwidth unused.
 
 **And this is where the measurement earns its keep**, because the result is not the intuitive one.
-Nineteen automatic cuts, same yardstick, across the three regimes:
+Twenty automatic cuts, same yardstick, across the three regimes:
 
 ```
-default    ~987k   n=5    preserved 56 %   names per window 23.8
-override 30 ~292k  n=4    preserved 85 %   names per window 12.0
-override 60 ~585k  n=10   preserved 66 %   names per window 26.7
+default    ~987k   n=4    preserved 46 %   names per window 29.0
+override 30 ~292k  n=5    preserved 88 %   names per window 10.2
+override 60 ~585k  n=11   preserved 63 %   names per window 27.0
 ```
 
-Read straight, doubling the threshold looks like it costs nineteen points. That is not what the data
-says. Those windows carried more than twice as many names. That is the variable that rules:
+Read straight, doubling the threshold looks like it costs twenty-five points. That is not what the
+data says. Those windows carried nearly three times as many names. That is the variable that rules:
 
 ```
-correlation between window density (distinct names) and % preserved, n=25
+correlation between window density (distinct names) and % preserved, n=26
    Pearson  -0.76
    Spearman -0.76
 ```
 
-The nineteen in the table are the **automatic** cuts, the only ones that say anything about the
-threshold. The correlation uses all twenty-five measured windows, those nineteen plus six manual
-cuts: manual cuts tell you nothing about the threshold, but they do inform the density relationship.
+The twenty in the table are the **automatic** cuts, the only ones that say anything about the
+threshold. The correlation uses all twenty-six measured windows, those twenty plus six manual cuts:
+manual cuts tell you nothing about the threshold, but they do inform the density relationship.
 
-Two yardsticks that do not assume the same shape of relationship point the same way. In the only
-density band where both regimes overlap, 19 to 25 names per window, the means are 65 % with the low
-cut and 71 % with the high one, indistinguishable at this sample size. The global gap measures how
-much work fitted in each window. Where the cut sat barely matters.
+Two yardsticks that do not assume the same shape of relationship point the same way. And in the only
+density band where both regimes overlap, 19 to 25 names per window, there is **a single window from
+the low cut, at 65 %, against three from the high one, between 50 % and 96 %**. That sample cannot
+separate the threshold effect from the density effect, and saying so matters: an earlier version of
+this paragraph called those "means", with one window on one side and three on the other.
+
+**One figure in this table was published wrong, and the reason is worth knowing.** The window of 24
+July at 10:52 was counted under the default regime, and its real cut was 292,789 tokens, that is
+override 30. The cause: every other row carries its cut in the label and that one did not, so
+grouping by label sent it to the wrong bucket. With it in place, the default regime goes from 56 %
+to 46 % and the low one from 85 % to 88 %. **The thesis does not fall, it gets stronger**, and a
+reviewer found it by cross-checking the label against the logbook, not the instrument.
 
 So the advice the data supports is not the one it started from. Moving the cut earlier works
 indirectly, by letting fewer files fit in a window. Attacking density is cheaper and costs no
 context: a committed file stops depending on the summary, because `git log` brings it back. You do
 not choose how dense the work is. You do choose when to commit.
 
-**What cutting earlier costs.** Every session pays a fixed toll before writing a line (system
-prompt, tools, skill descriptions, context files): 69,213 tokens on this install. Under the default
-cut that was 7.5 % of the cycle; with the cut at 292k it becomes 23.6 %, because the same toll is
-paid 3.4 times as often. That is the reason not to lower the percentage further than your case
-needs.
+**What cutting earlier costs.** Every cycle pays a fixed toll before writing a line (system prompt,
+tools, skill descriptions, context files): 69,213 tokens measured on 23 July 2026, and between
+70,000 and 71,000 across the last ten sessions. Against the default cut that is 7.0 %; against a cut
+at 292k it becomes 23.6 %, because the same toll is paid 3.4 times as often. That is the reason not
+to lower the percentage further than your case needs.
 
-The figures in this section come from one install, July 2026, one-million window. Yours will differ,
-and the measurer in this repository is exactly what tells you by how much.
+The figures in this section come from one install, July 2026, one-million window. Yours will differ.
+
+**And it must be said which of this you can reproduce.** The script shipped in this repository
+measures summary coverage and nothing else. The regime table, the density correlation and the
+startup toll come from two other measurers that live on the author's install and **are not published
+here**: they are reproducible in method, not in a command. What you do run as-is is
+`medir_compacts_generico.py` over your own history, which tells you whether your install behaves
+like this one.
 
 ### How this was measured: the reusable part
 
@@ -355,12 +397,16 @@ prediction missed by 0.8 %**. It stayed on the record. A prediction adjusted aft
 data is not a prediction.
 
 **4. Refute the rival hypothesis before celebrating your own.** A documented mechanism exists that,
-had it been active here, would have invalidated the whole effort. It was ruled out with local data:
-it acts at 90 % occupancy and the four measured cuts landed at 98.7 %.
+had it been active here, would have invalidated the whole effort: one that trims context at 90 %
+occupancy. It was ruled out with local data, and the argument matters in full: the cuts did not land
+at some arbitrary percentage but **exactly at the window minus a fixed margin**, which is the
+signature of a buffer threshold and not of that mechanism. With half the argument (90 % versus
+98.7 %) the conclusion does not even hold.
 
 **5. Publish the correction on top of the earlier version, without deleting it.** With seven windows
 measured, the conclusion was that the summary has a fixed ceiling of nine to seventeen names, no
-matter what. With nineteen it fell: two windows kept 21 and 28. With twenty-five, the variable that
+matter what. It widened to ten-twenty when the eighth window arrived, and with nineteen it fell for
+good: four went past seventeen, two of them keeping 21 and 28. With twenty-six, the variable that
 rules turned out to be density. The ceiling claim was written and published. It still sits next
 to what corrects it, because a record that deletes its earlier versions cannot teach how a
 measurement gets corrected.
@@ -397,8 +443,8 @@ its numbers:
 ### The limits worth stating
 
 **A cut is not an appearance.** The JSONL rewrites the same summary message once per later turn:
-between two copies only an internal identifier changes. On one real history that meant **230
-appearances for 149 cuts**, a 54 % inflation spread over 22 files. This tool deduplicates them. If
+between two copies only an internal identifier changes. On one real history, measured on 27 July 2026, that meant **233
+appearances for 152 cuts**, a 53 % inflation spread over 22 files. This tool deduplicates them. If
 you write your own, that is the first place the number goes wrong.
 
 **Subagent writes inflate the denominator.** An agent launched in parallel writes files the main
@@ -421,9 +467,12 @@ python mutar.py                           # 24 sabotajes contra esos 51 casos
 
 El segundo comando es el que da derecho a fiarse del primero. Sabotea el código a propósito, una
 línea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
-código: es una línea que ningún caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos. La
-primera vez que se pasó sobrevivían doce de dieciocho, o sea que se podía dejar la cobertura media
-clavada en el 99 % con los veinte casos de entonces en verde.
+código: es una línea que ningún caso vigila. Hoy son veinticuatro de veinticuatro, cero huecos.
+
+*Aquí había una frase que decía «la primera vez sobrevivían doce de dieciocho». No se ha podido
+anclar a ningún artefacto de este repositorio y probablemente venía de otro paquete, así que se
+retira en vez de dejarla puesta. Lo que sí queda documentado de este banco es la auditoría del
+26/07/2026, con nueve hallazgos y dos que bloqueaban la publicación.*
 
 ## Requisitos / Requirements
 Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar.

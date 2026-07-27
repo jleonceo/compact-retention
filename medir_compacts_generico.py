@@ -118,8 +118,8 @@ def ventanas_de_sesion(path):
 
     UN CORTE NO ES UNA APARICION. El JSONL reescribe el mismo mensaje `isCompactSummary` una vez
     por cada prompt posterior: entre dos copias solo cambia `promptId`, y `uuid`, `parentUuid`,
-    `timestamp` y el mensaje son identicos. Sobre un historial real medido el 25/07 habia **229
-    apariciones para 148 cortes**, un 55 % de inflado en 22 ficheros, con una sesion que sola tenia
+    `timestamp` y el mensaje son identicos. Sobre un historial real medido el 27/07 hay **233
+    apariciones para 152 cortes**, un 53 % de inflado en 22 ficheros, con una sesion que sola tenia
     22 apariciones de 7 resumenes. Contarlas todas abre ventanas que nunca existieron, reparte las
     escrituras de un corte entre varias y saca el MISMO resumen con seis porcentajes distintos.
     """
