@@ -138,8 +138,14 @@ def main(argv=None):
             print("  %s" % desc)
         return 0
 
-    original = io.open(MEDIDO, encoding="utf-8").read()
-    io.open(RESIDUO, "w", encoding="utf-8", newline="\n").write(original)
+    # LOS FINALES DE LINEA SE CONSERVAN TAL CUAL (27/07/2026). Antes se leia con saltos
+    # universales y se reescribia forzando LF, asi que en un clon de Windows con
+    # `core.autocrlf=true` el fichero pasaba de CRLF a LF y `git status` se quedaba diciendo
+    # ` M ` para siempre, con `git diff` vacio. Contenido intacto y arbol sucio, justo en el
+    # repositorio cuya tesis es que lo que protege es haber commiteado. Lo destapo una prueba
+    # de clon frio. `newline=""` desactiva la traduccion en las dos direcciones.
+    original = io.open(MEDIDO, encoding="utf-8", newline="").read()
+    io.open(RESIDUO, "w", encoding="utf-8", newline="").write(original)
     cazadas = huecos = sin_aplicar = 0
     print("=" * 78)
     print("VERIFICACION POR MUTACION  --  %d sabotajes contra el banco" % len(MUTACIONES))

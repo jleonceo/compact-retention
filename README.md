@@ -31,6 +31,18 @@ El JSONL de sesión ya contiene, en orden, los turnos previos al corte y el mens
 hook de sellado. Una sesión con varios cortes se trocea sola: cada `isCompactSummary` cierra una ventana.
 
 ### Uso
+
+Si no usas Claude Code, o quieres ver el programa funcionar antes de apuntarlo a nada tuyo:
+
+```bash
+python medir_compacts_generico.py --demo
+```
+
+Fabrica una sesión de juguete en un temporal, la mide y la borra. Anuncia lo que va a salir antes
+de salir, para que se pueda comprobar: tres ficheros escritos, el resumen nombra dos.
+
+Sobre tus propias sesiones:
+
 ```bash
 python medir_compacts_generico.py --sesion "ruta/al/fichero-de-sesion.jsonl"
 ```
@@ -50,7 +62,7 @@ números, y el mío también dentro de una semana, porque el historial crece con
 
 ```
 ------------------------------------------------------------------------------
-AGREGADO: 51 sesiones, 152 ventanas (148 con escrituras).
+AGREGADO: 51 sesiones, 153 ventanas (149 con escrituras).
 Nombres de fichero conservados por el resumen: banda de 1 a 29.
 Cobertura media (por nombre): 67%.
 Ahí vive la tesis del TECHO: el resumen conserva un número acotado de nombres,
@@ -288,6 +300,19 @@ The session JSONL already contains, in order, the turns before the cut and the m
 session with several cuts splits itself: each `isCompactSummary` closes a window.
 
 ### Usage
+
+If you do not use Claude Code, or want to see the program work before pointing it at
+anything of your own:
+
+```bash
+python medir_compacts_generico.py --demo
+```
+
+It builds a toy session in a temp folder, measures it and deletes it. It announces what the
+result will be before printing it, so you can check: three files written, the summary names two.
+
+On your own sessions:
+
 ```bash
 python medir_compacts_generico.py --sesion "path/to/session-file.jsonl"
 ```
@@ -497,8 +522,8 @@ figure. The truth sits between them, which is why both numbers ship.
 
 ## Tests
 ```bash
-python test_medir_compacts_generico.py    # 51 casos
-python mutar.py                           # 24 sabotajes contra esos 51 casos
+python test_medir_compacts_generico.py    # 56 casos
+python mutar.py                           # 24 sabotajes contra esos 56 casos
 ```
 
 

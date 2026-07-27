@@ -422,6 +422,56 @@ class TestLaCapaQueElUsuarioEjECUTA(BaseDir):
         cod, _, _ = self._correr("--sesion", self.tmp)
         self.assertEqual(cod, 2)
 
+    def test_una_carpeta_LLAMADA_jsonl_tambien_se_rechaza(self):
+        """El hueco que abrio la comprobacion de extension (27/07/2026).
+
+        Al añadir "esto no termina en .jsonl", el caso de arriba dejo de vigilar lo suyo: una
+        carpeta normal ya no llega a la comprobacion de fichero, porque la caza antes la de
+        extension. La mutacion que borraba el rechazo de carpetas sobrevivio, y el banco seguia
+        en verde. Con una carpeta LLAMADA `.jsonl`, la de extension pasa y solo puede cazarla la
+        de fichero, que es lo que este caso vigila.
+        """
+        carpeta = os.path.join(self.tmp, "parece_una_sesion.jsonl")
+        os.makedirs(carpeta)
+        cod, salida, _ = self._correr("--sesion", carpeta)
+        self.assertEqual(cod, 2)
+        self.assertIn("espera un fichero", salida, "rechazada, pero por el motivo equivocado")
+
+    def test_un_fichero_que_no_es_jsonl_lo_dice(self):
+        """Antes daba el mismo texto y el mismo codigo 0 que "aqui no hay cortes", asi que quien
+        se equivocaba de argumento concluia que no tenia compacts. Lo destapo un clon frio."""
+        ruta = os.path.join(self.tmp, "notas.txt")
+        with io.open(ruta, "w", encoding="utf-8") as fh:
+            fh.write("esto no es una sesion\n")
+        cod, salida, _ = self._correr("--sesion", ruta)
+        self.assertEqual(cod, 2)
+        self.assertIn("no es un .jsonl", salida)
+
+    def test_un_jsonl_con_basura_dentro_lo_dice(self):
+        ruta = os.path.join(self.tmp, "roto.jsonl")
+        with io.open(ruta, "w", encoding="utf-8") as fh:
+            fh.write("basura basura\nmas basura\n")
+        cod, salida, _ = self._correr("--sesion", ruta)
+        self.assertEqual(cod, 2)
+        self.assertIn("ninguna línea es JSON válido", salida)
+
+    def test_el_fichero_VACIO_sigue_saliendo_con_cero(self):
+        """Control negativo de los dos de arriba. Un fichero vacio no es un error: es una sesion
+        sin nada dentro. Si esto se pusiera en 2, la herramienta trataria "no tienes cortes" como
+        un fallo del usuario."""
+        ruta = os.path.join(self.tmp, "vacio.jsonl")
+        io.open(ruta, "w", encoding="utf-8").close()
+        cod, _, _ = self._correr("--sesion", ruta)
+        self.assertEqual(cod, 0)
+
+    def test_la_demo_funciona_sin_historial_propio(self):
+        """`--demo` existe porque quien no usa Claude Code no tenia nada que mirar: su primera
+        ejecucion era un bloque de ceros. La demo anuncia 2 de 3 y tiene que sacar 2 de 3."""
+        cod, salida, _ = self._correr("--demo")
+        self.assertEqual(cod, 0)
+        self.assertIn("2 de 3", salida, "la demo promete 2 de 3 en su cabecera")
+        self.assertIn("notas_sueltas.txt", salida, "dice cual es el que se pierde")
+
 class TestHuecosQueDestapoLaMutacion(BaseDir):
     """Siete lineas que el banco no vigilaba, cada una con su caso.
 

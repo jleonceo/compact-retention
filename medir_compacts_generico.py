@@ -402,6 +402,9 @@ def main(argv=None):
                    help="UN fichero .jsonl de sesión. Es por donde se empieza: mide solo esa.")
     p.add_argument("--projects-dir", default=None,
                    help="Carpeta con los JSONL de sesión (recursivo). Por defecto, ~/.claude/projects.")
+    p.add_argument("--demo", action="store_true",
+                   help="Fabrica una sesion de juguete en un temporal y la mide. Sirve para ver "
+                        "el programa funcionar sin tener historial propio.")
     p.add_argument("--json", action="store_true", help="Salida en JSON en vez de texto.")
     p.add_argument("--con-nombres", action="store_true",
                    help="Incluye en el JSON los NOMBRES de fichero que el resumen perdió. Son "
@@ -411,6 +414,41 @@ def main(argv=None):
     if args.sesion and args.projects_dir:
         print("--sesion y --projects-dir piden cosas distintas: un fichero o una carpeta. Elige.")
         return 2
+
+    # `--demo` EXISTE PORQUE QUIEN NO USA CLAUDE CODE NO TENIA NADA QUE MIRAR (27/07/2026). Sin
+    # historial propio, la primera ejecucion de un desconocido era un bloque de ceros: no podia
+    # distinguir "esta herramienta no me sirve" de "no tengo cortes todavia". Lo señalaron por
+    # separado un lector externo y una prueba de clon frio. Fabrica la traza en un temporal y la
+    # borra: no escribe en el arbol ni toca tu historial.
+    if args.demo:
+        import shutil
+        import tempfile
+        carpeta = tempfile.mkdtemp(prefix="compact_demo_")
+        try:
+            ruta = os.path.join(carpeta, "sesion_de_juguete.jsonl")
+            escritura = lambda f: {"message": {"content": [
+                {"type": "tool_use", "name": "Write", "input": {"file_path": f}}]}}
+            filas = [escritura("/proyecto/informe.md"),
+                     escritura("/proyecto/analisis.py"),
+                     escritura("/proyecto/notas_sueltas.txt"),
+                     {"message": {"content": [
+                         {"type": "text",
+                          "text": "Commit a1b2c3d sobre ABC-001, ya cerrado."}]}},
+                     {"isCompactSummary": True, "message": {"content":
+                      "Resumen: se trabajo en informe.md y en analisis.py, con el commit "
+                      "a1b2c3d y la incidencia ABC-001. Queda pendiente revisar el resto."}}]
+            with io.open(ruta, "w", encoding="utf-8", newline="\n") as fh:
+                for fila in filas:
+                    fh.write(json.dumps(fila, ensure_ascii=False) + "\n")
+            print("DEMO: sesion de juguete con 3 ficheros escritos, 1 commit y 1 identificador.")
+            print("      El resumen nombra dos de los tres ficheros, asi que la cobertura por")
+            print("      nombre tiene que salir 2 de 3. Lo que falta, `notas_sueltas.txt`.")
+            print()
+            por_ventana, agregado = medir_todo(ruta, con_nombres=False)
+            imprimir(por_ventana, agregado, ruta)
+            return 0
+        finally:
+            shutil.rmtree(carpeta, ignore_errors=True)
 
     # SIN ARGUMENTOS SE LEE TODO EL HISTORIAL, Y ESO HAY QUE DECIRLO. El valor por defecto es la
     # carpeta de todos los proyectos, o sea que la primera ejecucion curiosa abre conversaciones
@@ -424,6 +462,34 @@ def main(argv=None):
     if args.sesion and not os.path.isfile(origen):
         print("--sesion espera un fichero .jsonl. Para una carpeta entera usa --projects-dir.")
         return 2
+
+    # EL FICHERO EQUIVOCADO TIENE QUE DECIRLO (27/07/2026). Antes, apuntar `--sesion` a un
+    # `notas.txt` daba el mismo texto y el mismo codigo 0 que "aqui no hay cortes", asi que quien
+    # se equivocaba de argumento concluia que no tenia compacts. Tres estados distintos con una
+    # sola respuesta. Lo destapo una prueba de clon frio.
+    #
+    # Un fichero VACIO sigue saliendo con codigo 0 a proposito: eso no es un error, es una sesion
+    # sin nada dentro, y hay dos casos del banco que lo fijan.
+    if args.sesion:
+        if not origen.lower().endswith(".jsonl"):
+            print("%s no es un .jsonl. Las sesiones de Claude Code terminan en .jsonl; esto "
+                  "parece otra cosa." % os.path.basename(origen))
+            return 2
+        legibles = 0
+        with io.open(origen, encoding="utf-8", errors="replace") as fh:
+            for linea in fh:
+                if not linea.strip():
+                    continue
+                try:
+                    json.loads(linea)
+                    legibles += 1
+                    break
+                except Exception:
+                    continue
+        if os.path.getsize(origen) > 0 and legibles == 0:
+            print("%s tiene contenido pero ninguna línea es JSON válido: no parece un JSONL de "
+                  "sesión." % os.path.basename(origen))
+            return 2
     if not args.sesion and not args.projects_dir:
         # A stderr, y no es cosmetico: iba a stdout por delante del JSON y la salida en modo
         # maquina dejaba de ser JSON. Quien encadenara esto con otra cosa recibia un aviso
