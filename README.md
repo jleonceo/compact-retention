@@ -69,8 +69,9 @@ medirlas.
 
 Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
 es: de los veintisiete cortes que este autor lleva medidos uno por uno, **veintitrés** no perdieron
-nada que no se pudiera recuperar de git o del disco. En los otros cuatro se perdió algo de verdad, y
-lo perdido fueron seis ficheros en total.
+nada que no se pudiera recuperar de git o del disco.
+
+En los otros cuatro se perdió algo de verdad. Seis ficheros en total.
 
 Aquí ponía «de los veintiséis, veinticinco». Esa forma de «todos menos uno» llevaba tres versiones
 arrastrándose sin volver a medirse. La destapó un escéptico ejecutando el medidor en vez de leer el
@@ -86,8 +87,10 @@ lo avisa.
 Claude Code compacta solo cuando la ventana está casi llena. El umbral de fábrica es la ventana
 menos un margen, que en esta instalación son 987.000 tokens sobre un millón, el 98,7 %. Los cuatro
 picos medidos antes de tocar nada fueron 997.956, 997.369, 994.163 y 970.036, entre el 97,0 % y el
-99,8 % de ocupación. El problema no es que resuma: es que para cuando resume llevas mucho rato
-trabajando con el contexto saturado.
+99,8 % de ocupación.
+
+El problema no es que resuma. Es que para cuando resume llevas mucho rato trabajando con el
+contexto saturado.
 
 El corte se adelanta con dos variables de entorno, ambas documentadas en
 [code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars):
@@ -141,8 +144,10 @@ manuales: al umbral no lo tocan, y a la relación entre densidad y conservación
 Dos varas que no dependen de la misma forma de la relación apuntan al mismo sitio. Y en la única
 banda de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, hay **una
 sola ventana del corte bajo, al 65 %, contra tres del alto, entre el 50 % y el 96 %**. Con esa
-muestra no se puede separar el efecto del umbral del efecto de la densidad, y decirlo así importa:
-la versión anterior de este párrafo llamaba «medias» a un dato de una ventana frente a otro de tres.
+muestra no se puede separar el efecto del umbral del efecto de la densidad.
+
+Decirlo importa. La versión anterior de este párrafo llamaba «medias» a un dato de una ventana
+frente a otro de tres.
 
 **Una cifra de esta tabla estuvo mal publicada y conviene saber por qué.** La ventana del 24/07 a
 las 10:52 estaba contada en el régimen por defecto, y su corte real fue de 292.789 tokens, o sea
@@ -154,7 +159,9 @@ encontró un revisor cruzando la etiqueta contra la bitácora. El instrumento no
 Así que el consejo que sale del dato no es el que parecía al empezar. Adelantar el corte funciona de
 forma indirecta, porque hace que quepan menos ficheros en cada ventana. Atacar la densidad sale más
 barato y no cuesta contexto: un fichero commiteado deja de depender del resumen porque lo repone
-`git log`. La densidad del trabajo no se elige. El momento del commit sí.
+`git log`.
+
+La densidad del trabajo no se elige. El momento del commit sí.
 
 **Lo que cuesta adelantar el corte.** Cada ciclo paga un peaje fijo antes de escribir una línea
 (prompt de sistema, herramientas, descripciones de skills y ficheros de contexto): 69.213 tokens
@@ -296,8 +303,9 @@ the mean coverage by name, and `banda de 1 a 29` is the range of names any one s
 
 The last two paragraphs are always printed. On its own the number reads as loss. It is not: of the
 twenty-seven cuts this author has measured one by one, **twenty-three** lost nothing that could not
-be recovered from git or from disk. In the other four something was really lost, and what was lost
-came to six files in total.
+be recovered from git or from disk.
+
+In the other four something was really lost. Six files in total.
 
 This used to say "of the twenty-six, twenty-five". That "all but one" shape had been dragged along
 for three versions without being measured again. A skeptic caught it by running the measurer
@@ -366,8 +374,10 @@ manual cuts tell you nothing about the threshold, but they do inform the density
 Two yardsticks that do not assume the same shape of relationship point the same way. And in the only
 density band where both regimes overlap, 19 to 25 names per window, there is **a single window from
 the low cut, at 65 %, against three from the high one, between 50 % and 96 %**. That sample cannot
-separate the threshold effect from the density effect, and saying so matters: an earlier version of
-this paragraph called those "means", with one window on one side and three on the other.
+separate the threshold effect from the density effect.
+
+Saying so matters. An earlier version of this paragraph called those "means", with one window on
+one side and three on the other.
 
 **One figure in this table was published wrong, and the reason is worth knowing.** The window of 24
 July at 10:52 was counted under the default regime, and its real cut was 292,789 tokens, that is
@@ -378,8 +388,9 @@ reviewer found it by cross-checking the label against the logbook, not the instr
 
 So the advice the data supports is not the one it started from. Moving the cut earlier works
 indirectly, by letting fewer files fit in a window. Attacking density is cheaper and costs no
-context: a committed file stops depending on the summary, because `git log` brings it back. You do
-not choose how dense the work is. You do choose when to commit.
+context: a committed file stops depending on the summary, because `git log` brings it back.
+
+You do not choose how dense the work is. You do choose when to commit.
 
 **What cutting earlier costs.** Every cycle pays a fixed toll before writing a line (system prompt,
 tools, skill descriptions, context files): 69,213 tokens measured on 23 July 2026, and between
