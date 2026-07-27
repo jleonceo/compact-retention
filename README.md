@@ -82,9 +82,7 @@ medirlas.
 Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
 es: de los veintisiete cortes que este autor lleva medidos uno por uno, **veintitrés** no perdieron
 nada que no se pudiera recuperar de git o del disco. En los otros cuatro se perdió algo de verdad,
-seis ficheros en total. Aquí ponía «de los veintiséis, veinticinco». Esa forma de «todos menos uno» llevaba tres versiones
-arrastrándose sin volver a medirse. La destapó un escéptico ejecutando el medidor en vez de leer el
-texto. Cuatro sobre veintisiete sigue siendo poco, pero es cuatro veces más de lo que se publicaba.
+seis ficheros en total. Cuatro sobre veintisiete sigue siendo poco, pero es cuatro veces más de lo que se publicaba.
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
@@ -130,10 +128,6 @@ override 30 ~292k   n=5    conservado 88 %   nombres por ventana 10,2
 override 60 ~585k   n=12   conservado 61 %   nombres por ventana 27,5
 ```
 
-La fila del override 60 pasó de n=11 a n=12 el 27/07 por la tarde, con un corte que entró después de
-escribir esto y que conservó poco. Se deja dicho porque la serie crece sola y una tabla publicada
-envejece cada vez que el autor trabaja.
-
 Leído de corrido parece que doblar el umbral cuesta veintisiete puntos de conservación. No es eso lo
 que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro, y la variable que manda
 es esa:
@@ -151,9 +145,6 @@ varas que no dependen de la misma forma de la relación apuntan al mismo sitio. 
 banda de densidad donde los dos regímenes se solapan, de 19 a 25 nombres por ventana, hay **una
 sola ventana del corte bajo, al 65 %, contra tres del alto, entre el 50 % y el 96 %**. Con esa
 muestra no se puede separar el efecto del umbral del efecto de la densidad.
-
-Decirlo importa. La versión anterior de este párrafo llamaba «medias» a un dato de una ventana
-frente a otro de tres.
 
 **Una cifra de esta tabla estuvo mal publicada y conviene saber por qué.** La ventana del 24/07 a
 las 10:52 estaba contada en el régimen por defecto, y su corte real fue de 292.789 tokens, o sea
@@ -185,50 +176,11 @@ publican aquí**: son reproducibles en método, aunque no en un comando. Lo que 
 `medir_compacts_generico.py` sobre tu propio historial, que es lo que te dice si tu instalación se
 comporta como esta.
 
-### Cómo se midió: la parte reutilizable
+### Cómo se midió
 
-Lo de arriba son los resultados. Esto es cómo se consiguieron. El orden de los pasos importa
-más que la herramienta. Se puede copiar en cualquier medición parecida. Fueron tres días, y dos y medio
-de ellos se fueron en medir en vez de en configurar.
-
-**1. Instrumentar antes de tocar nada.** Un hook que se dispara en el corte y sella el transcript
-entero más el estado de git. Sin eso, cada compact es un suceso del que solo queda una impresión.
-La lección vino por las malas: el primer auto-compact **interrumpió literalmente la instalación del
-instrumento que debía medirlo**, entró 55,9 segundos antes de que el hook quedara registrado, y su
-bitácora vacía se leyó como «no ha ocurrido». De ahí sale una regla que vale para cualquier
-instrumento: si nació después de la ventana que dice cubrir, **su silencio no es evidencia**.
-
-**2. Una sola vara para todos los casos.** Las cinco primeras medidas se hicieron cada una a su
-manera. Una contaba ficheros escritos que el resumen nombra; otra, ficheros sin commitear que el
-resumen nombra. Puestas en fila dibujaban un desplome que no existía. Cifra bien calculada sobre
-objeto distinto sigue siendo falsa, y encima con aire de rigor.
-
-**3. Escribir la predicción antes de ver el resultado.** Antes de subir el umbral se dejó escrito
-dónde tenía que caer el corte: entre 585.000 y 600.000 tokens. Cayó en 580.370, o sea que **la
-predicción falló por un 0,8 %** y quedó escrita en su sitio. Una predicción que se ajusta después de
-ver el dato no es una predicción.
-
-**4. Refutar la hipótesis rival antes de celebrar la propia.** Existe un mecanismo documentado que,
-de estar actuando aquí, habría invalidado el trabajo entero: uno que recorta el contexto al llegar
-al 90 % de ocupación. Se descartó con dato propio, y el argumento importa entero: los cortes no
-caían a un porcentaje cualquiera, sino **en la ventana menos un margen**, que es la
-firma de un umbral por buffer y no la de ese mecanismo. Con la mitad del argumento (el 90 % contra
-el 98,7 %) la conclusión ni siquiera se sostiene.
-
-**5. Publicar la corrección encima de la versión anterior, sin borrarla.** Con siete ventanas medidas
-la conclusión era que el resumen tiene un techo fijo de nueve a diecisiete nombres, pasara lo que
-pasara. Se ensanchó a diez-veinte al llegar la octava ventana, y con diecinueve se cayó del todo:
-cuatro pasaban de diecisiete, dos de ellas con 21 y 28. Con veintiséis, la variable que manda
-resultó ser la densidad. La tesis del techo estaba escrita y publicada, y sigue escrita al
-lado de lo que la corrige, porque un registro que borra sus versiones anteriores no enseña cómo se
-corrige una medición.
-
-**6. Un baseline que se está midiendo no admite dos ejecuciones a la vez.** El error más caro de la
-serie casi no se ve: un proceso de fondo que no imprime nada no está parado, así que se relanzó, y
-los dos quedaron vivos escribiendo el mismo fichero de referencia. En medio se cambió el código bajo
-medición. El segundo habría sobrescrito el «antes» con cifras del «después», el diff habría salido
-plano y **nada lo habría delatado**: dos ficheros con el nombre correcto y el contenido
-intercambiado no disparan ninguna alarma. Se cazó mirando los procesos por otro motivo.
+Los seis pasos del método están en **[METODO.md](METODO.md)**, con el fallo que enseñó cada uno.
+Empiezan por el que más caro salió: el primer corte automático interrumpió la instalación del
+instrumento que debía medirlo, y su bitácora vacía se leyó como «no ha ocurrido».
 
 ### Lo que puede romper esto
 
@@ -421,51 +373,11 @@ here**: they are reproducible in method, not in a command. What you do run as-is
 `medir_compacts_generico.py` over your own history, which tells you whether your install behaves
 like this one.
 
-### How this was measured: the reusable part
+### How this was measured
 
-Everything above is results. This is how they were reached. The order of the steps matters
-more than the tool does. It transfers to any similar measurement. It took three days, two and a
-half of them spent measuring rather than configuring.
-
-**1. Instrument before touching anything.** A hook that fires on the cut and seals the whole
-transcript plus the git state. Without that, each compact is an event you only have an impression
-of. The lesson came the hard way: the first auto-compact **literally interrupted the installation of
-the instrument meant to measure it**, landing 55.9 seconds before the hook was registered, and its
-empty log was read as "it never happened". Hence a rule that holds for any instrument: if it was
-born after the window it claims to cover, **its silence is not evidence**.
-
-**2. One yardstick for every case.** The first five measurements were each done their own way. One
-counted written files named by the summary; another, uncommitted files named by the summary. Lined
-up, they drew a collapse that did not exist. A figure computed correctly over a different object is
-still false, with an air of rigour on top.
-
-**3. Write the prediction before seeing the result.** Before raising the threshold, where the cut
-had to land was written down: between 585,000 and 600,000 tokens. It landed at 580,370, so **the
-prediction missed by 0.8 %**. It stayed on the record. A prediction adjusted after seeing the
-data is not a prediction.
-
-**4. Refute the rival hypothesis before celebrating your own.** A documented mechanism exists that,
-had it been active here, would have invalidated the whole effort: one that trims context at 90 %
-occupancy. It was ruled out with local data, and the argument matters in full: the cuts did not land
-at some arbitrary percentage but **at the window minus a margin**, which is the
-signature of a buffer threshold and not of that mechanism. With half the argument (90 % versus
-98.7 %) the conclusion does not even hold.
-
-**5. Publish the correction on top of the earlier version, without deleting it.** With seven windows
-measured, the conclusion was that the summary has a fixed ceiling of nine to seventeen names, no
-matter what. It widened to ten-twenty when the eighth window arrived, and with nineteen it fell for
-good: four went past seventeen, two of them keeping 21 and 28. With twenty-six, the variable that
-rules turned out to be density. The ceiling claim was written and published. It still sits next
-to what corrects it, because a record that deletes its earlier versions cannot teach how a
-measurement gets corrected.
-
-**6. A baseline being measured does not allow two runs at once.** The costliest mistake in the
-series is nearly invisible: a background process printing nothing is not a stalled process, so it
-got relaunched, and both stayed alive writing the same reference file. Meanwhile the code under
-measurement was changed. The second run would have overwritten the "before" with "after" figures,
-the diff would have come out flat, and **nothing would have flagged it**: two files with the right
-names and swapped contents raise no alarm. It was caught while looking at processes for an
-unrelated reason.
+The six steps live in **[METODO.md](METODO.md)**, each with the failure that taught it. They start
+with the most expensive one: the first automatic cut interrupted the installation of the very
+instrument meant to measure it, and its empty log read as «it did not happen».
 
 ### What can break this
 
@@ -532,12 +444,6 @@ dieciocho mutaciones a mano contra una suite de veinte casos y **sobrevivieron d
 la cobertura clavada en el 99 %, o borrar el aviso de privacidad que este README promete, con los
 veinte casos en verde. De ahí salen los veintiocho sabotajes de hoy.*
 
-*Y una corrección sobre la corrección. Este párrafo llegó a decir que esa frase «no se ha podido
-anclar a ningún artefacto de este repositorio» y que se retiraba por eso. Era falso: el artefacto es
-`mutar.py`, o sea el segundo de los dos comandos que este README manda ejecutar. Lo cazó un escéptico
-el 27/07 abriendo el fichero. Retirar una afirmación porque no se encuentra su fuente, sin haber
-mirado dentro del propio paquete, es el mismo error que retirarla tarde.*
-
 ## Requisitos / Requirements
 Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está **certificado**
 desde el 27/07/2026: nueve trabajos en verde, con 3.9, 3.11 y 3.13 sobre Windows, Linux y Mac.
@@ -547,9 +453,9 @@ en la dirección que hace parecer el repositorio peor de lo que es.
 
 Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is **certified** as of
 27/07/2026: nine green jobs across 3.9, 3.11 and 3.13 on Windows, Linux and Mac. Until that morning
-this line read «declared, not certified», which was true. It stopped being true on the first push
-and stayed up for a few hours: a note of humility goes stale like any other figure, and this one
-went stale in the direction that makes the repository look worse than it is.
+this line read «declared, not certified», which was true. It was true when written and stopped being true on the
+first push, yet it stayed up for hours. A note of humility goes stale like any other figure. This
+one went stale towards the side that makes the repository look worse than it is.
 
 ## Licencia / License
 MIT. Ver [LICENSE](LICENSE).
