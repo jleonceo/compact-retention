@@ -134,7 +134,7 @@ La fila del override 60 pasó de n=11 a n=12 el 27/07 por la tarde, con un corte
 escribir esto y que conservó poco. Se deja dicho porque la serie crece sola y una tabla publicada
 envejece cada vez que el autor trabaja.
 
-Leído de corrido parece que doblar el umbral cuesta veinticinco puntos de conservación. No es eso lo
+Leído de corrido parece que doblar el umbral cuesta veintisiete puntos de conservación. No es eso lo
 que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro, y la variable que manda
 es esa:
 
@@ -245,8 +245,8 @@ números:
   recuento que baja sin motivo en vez de un error: por eso el banco fabrica sus propias trazas y no
   depende de tu historial.
 - **Tus transcripts se borran a los 30 días** por defecto (`cleanupPeriodDays`). Cualquier medición
-  «desde siempre» tiene ese suelo, y una regla que diste de alta hace tres meses no la puedes medir desde
-  su alta. **Y esto vale para las cifras de aquí arriba:** la instalación de la que salen tiene ese
+  «desde siempre» tiene ese suelo, y un corte de hace tres meses ya no se puede medir: su transcript
+  no está. **Y esto vale para las cifras de aquí arriba:** la instalación de la que salen tiene ese
   valor puesto en 3650, o sea el borrado desactivado. Con los treinta días de fábrica no habría
   historial suficiente para llegar a cincuenta y una sesiones.
 - `CLAUDE_CONFIG_DIR` mueve la carpeta entera fuera de `~/.claude`, y
@@ -373,7 +373,7 @@ The override-60 row went from n=11 to n=12 on the afternoon of 27/07, with a cut
 this was written and preserved little. It is said here because the series grows on its own, and a
 published table ages every time the author works.
 
-Read straight, doubling the threshold looks like it costs twenty-five points. That is not what the
+Read straight, doubling the threshold looks like it costs twenty-seven points. That is not what the
 data says. Those windows carried nearly three times as many names. That is the variable that rules:
 
 ```
@@ -482,8 +482,8 @@ its numbers:
   dropping for no reason, not an error. That is why the test suite builds its own traces and never
   reads your real history.
 - **Your transcripts are deleted after 30 days** by default (`cleanupPeriodDays`). Any "since the
-  beginning" measurement has that floor, and a rule you added three months ago cannot be measured
-  from the day you added it. **This applies to the figures above:** the install they come from has
+  beginning" measurement has that floor, and a compact from three months ago can no longer be
+  measured: its transcript is gone. **This applies to the figures above:** the install they come from has
   that value set to 3650, which disables the deletion. With the factory thirty days there would not
   be enough history to reach fifty-one sessions.
 - `CLAUDE_CONFIG_DIR` moves the whole folder out of `~/.claude`, and
@@ -532,8 +532,10 @@ el 27/07 abriendo el fichero. Retirar una afirmación porque no se encuentra su 
 mirado dentro del propio paquete, es el mismo error que retirarla tarde.*
 
 ## Requisitos / Requirements
-Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar.
-Python 3.9+, standard library only: no pytest, nothing to install.
+Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está declarado, no
+certificado: lo único ejecutado hasta hoy es Python 3.14 en Windows, y la matriz de CI dice lo mismo.
+Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is declared, not
+certified: the only thing run so far is Python 3.14 on Windows, and the CI matrix says so too.
 
 ## Licencia / License
 MIT. Ver [LICENSE](LICENSE).
