@@ -65,7 +65,7 @@ veintitrés cortes medidos, veintidós no perdieron nada que no se pudiera recup
 
 **Sin ningún argumento lee TODO tu historial**, de todos los proyectos a la vez, porque ese es el
 valor por defecto. No sale nada de tu ordenador, pero son conversaciones privadas y sus nombres
-aparecen por pantalla, así que conviene saberlo antes de la primera ejecución curiosa. El programa
+aparecen por pantalla, así que más vale que lo sepas antes de tu primera ejecución por curiosidad. El programa
 lo avisa.
 
 ### Lo que puede romper esto
@@ -76,21 +76,21 @@ directamente puede dejar de funcionar en cualquier actualización**. Lo dice en
 [code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions). Ahí recomienda usar
 `/export` o las interfaces de script en su lugar.
 
-Esta herramienta hace justo lo que ahí se desaconseja, y conviene saberlo antes de apoyarse en sus
+Esta herramienta hace justo lo que ahí se desaconseja, y lo sabes antes de apoyarte en sus
 números:
 
 - **Probada contra Claude Code 2.x**, en julio de 2026. Si el formato cambia, lo que verás es un
   recuento que baja sin motivo en vez de un error: por eso el banco fabrica sus propias trazas y no
   depende de tu historial.
 - **Tus transcripts se borran a los 30 días** por defecto (`cleanupPeriodDays`). Cualquier medición
-  «desde siempre» tiene ese suelo, y una regla dada de alta hace tres meses no se puede medir desde
+  «desde siempre» tiene ese suelo, y una regla que diste de alta hace tres meses no la puedes medir desde
   su alta.
 - `CLAUDE_CONFIG_DIR` mueve la carpeta entera fuera de `~/.claude`, y
   `CLAUDE_CODE_SKIP_PROMPT_HISTORY` deja de escribirlos.
 - El transcript se escribe de forma asíncrona, así que los últimos segundos de una sesión viva
   pueden no estar todavía en disco.
 
-### Los límites que hay que decir
+### Los límites que debes conocer
 
 **Un corte no es una aparición.** El JSONL reescribe el mismo mensaje de resumen una vez por cada
 turno posterior: entre dos copias solo cambia un identificador interno. Sobre un historial real se
