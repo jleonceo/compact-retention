@@ -281,11 +281,16 @@ def sesiones_en(projects_dir):
     carpetas: el comando de la primera pantalla fallaba el 100 % de las veces, en los dos idiomas.
     """
     if os.path.isfile(projects_dir):
-        return [projects_dir] if projects_dir.endswith(".jsonl") else []
+        return [projects_dir] if projects_dir.lower().endswith(".jsonl") else []
     encontrados = []
     for raiz, _, ficheros in os.walk(projects_dir):
         for f in ficheros:
-            if f.endswith(".jsonl"):
+            # `.lower()` EN LAS CUATRO COMPROBACIONES (27/07/2026). Aqui iba sin el y en las
+            # puertas de validacion con el, asi que un `S.JSONL` copiado en Windows o en Mac
+            # pasaba la puerta y luego no lo recogia nadie: cero silencioso por las DOS banderas,
+            # sobre un fichero de contenido perfectamente valido. Dos funciones del mismo fichero
+            # discrepando sobre el mismo predicado. Lo cazo una auditoria ciega.
+            if f.lower().endswith(".jsonl"):
                 encontrados.append(os.path.join(raiz, f))
     return sorted(encontrados)
 

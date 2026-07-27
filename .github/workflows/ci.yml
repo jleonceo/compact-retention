@@ -14,7 +14,7 @@ name: ci
 # dentro de otro repo, y se presento como si estuviera operando. Lo unico probado hasta
 # hoy es Python 3.14 en Windows. La primera ejecucion real sera el primer push.
 #
-# YA SE EJECUTO (27/07/2026): 9 de 9 trabajos en verde en `17b0738`, con 3.9, 3.12 y 3.14
+# YA SE EJECUTO (27/07/2026): 9 de 9 trabajos en verde en `17b0738`, con 3.9, 3.11 y 3.13
 # sobre Windows, Linux y Mac. El aviso de arriba se queda como estaba, tachado y no
 # borrado, porque era cierto cuando se escribio y su correccion es el dato.
 #
@@ -22,6 +22,12 @@ name: ci
 # EN LA DIRECCION QUE HACE PARECER EL REPOSITORIO PEOR DE LO QUE ES. Un documento que
 # narra su propio estado hay que volver a medirlo en cada commit, no solo cuando se
 # sospecha que exagera. Lo cazo una revision ciega el mismo dia, no yo.
+#
+# Y la correccion se escribio MAL a la primera: decia 3.12 y 3.14, que son las versiones del
+# portatil donde se probo a mano, no las de esta matriz. O sea que al corregir una frase
+# caducada se publico un dato inventado, en el mismo parrafo que se felicitaba por haber
+# cazado la frase caducada. Lo cazaron DOS auditorias ciegas leyendo este fichero. La linea
+# de `python-version` de abajo es la fuente: si vuelven a no coincidir, manda la matriz.
 
 on:
   push:

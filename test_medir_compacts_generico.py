@@ -816,5 +816,43 @@ class TestLoQueDestapoLaAuditoriaExterna(unittest.TestCase):
                       "la salida no nombra la decision que la cifra habilita")
 
 
+class TestMayusculasYControlDelArnes(BaseDir):
+    """Heredar de la clase que trae `_correr` REEJECUTA sus quince casos y el banco pasaba de 61
+    a 77 sin haber probado nada nuevo. Un contador que sube por herencia es un contador que
+    miente. Se copia el ayudante, que son seis lineas."""
+
+    def _correr(self, *args):
+        import contextlib
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            try:
+                cod = m.main(list(args))
+            except SystemExit as e:
+                cod = e.code
+        return cod, out.getvalue(), err.getvalue()
+
+
+    def test_un_JSONL_en_mayusculas_se_recoge_igual(self):
+        """Dos funciones del mismo fichero discrepaban sobre el mismo predicado.
+
+        La puerta de validacion comparaba con `.lower()` y el recolector sin el, asi que un
+        `S.JSONL` copiado en Windows o en Mac pasaba la puerta y luego no lo recogia nadie: cero
+        silencioso por las DOS banderas, sobre un fichero de contenido perfectamente valido.
+        """
+        filas = [{"message": {"content": [{"type": "tool_use", "name": "Write",
+                                           "input": {"file_path": "/p/a.md"}}]}},
+                 {"isCompactSummary": True, "message": {"content": "Resumen: a.md."}}]
+        carpeta = os.path.join(self.tmp, "mayus")
+        os.makedirs(carpeta)
+        for nombre in ("MAYUS.JSONL", "minus.jsonl"):
+            with io.open(os.path.join(carpeta, nombre), "w", encoding="utf-8") as fh:
+                for f in filas:
+                    fh.write(json.dumps(f) + "\n")
+        cod, salida, _ = self._correr("--projects-dir", carpeta)
+        self.assertEqual(cod, 0)
+        self.assertIn("2 sesiones", salida,
+                      "la de mayusculas se queda fuera y nadie lo dice")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

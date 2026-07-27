@@ -212,7 +212,17 @@ def main(argv=None):
         #
         # Va DENTRO del try, con el residuo todavia en disco, porque tiene que sufrir exactamente
         # las mismas condiciones que las mutaciones reales. Escrito fuera probaria otro escenario.
+        # Y ESTE CONTROL FALLABA ABIERTO (27/07/2026, segunda ronda). Si la marca no estaba, la
+        # comprobacion se saltaba entera, `nulo_ok` se quedaba en None y el arnes salia con CERO
+        # sin haber demostrado que ve. No hace falta mala fe para llegar ahi: `pyupgrade` borra
+        # esa cookie de serie, porque el PEP 3120 la volvio redundante. O sea que un linter
+        # anulaba el aval de los 28 sabotajes, en silencio y con codigo de exito. Ahora la
+        # ausencia de marca SUSPENDE: un guardian que aprueba cuando no ha podido mirar convierte
+        # cada duda en una puerta. Lo cazo una auditoria ciega sobre el repositorio publicado.
         marca = "# -*- coding: utf-8 -*-"
+        if marca not in original:
+            print("  control nulo: NO SE PUDO APLICAR. El ancla que usa ya no esta en el fichero")
+            print("  medido, asi que el arnes se queda sin demostrar que distingue.")
         if marca in original:
             io.open(MEDIDO, "w", encoding="utf-8", newline="").write(
                 original.replace(marca, marca + "   # control nulo del arnes", 1))
@@ -230,12 +240,17 @@ def main(argv=None):
         print("  Un hueco no es un fallo del codigo: es una linea que el banco no vigila.")
     if sin_aplicar:
         print("  'Sin aplicar' tampoco es aprobado: esas lineas se quedaron sin probar.")
+    if nulo_ok is None:
+        print("  control nulo: NO EJECUTADO. Las %d cazadas de arriba no prueban nada mientras"
+              % cazadas)
+        print("  el arnes no ensene que tambien sabe decir HUECO. Sale con 1 a proposito.")
     if nulo_ok is True:
         print("  control nulo: HUECO, que es lo correcto -- el arnes distingue.")
     elif nulo_ok is False:
         print("  control nulo: CAZADA. El arnes esta CIEGO: pone el banco rojo por algo que no")
         print("  es el sabotaje, asi que las %d de arriba no prueban nada." % cazadas)
-    return 1 if (huecos or sin_aplicar or nulo_ok is False) else 0
+    # `is not True`, no `is False`: el None tambien suspende, y esa distincion ES el arreglo.
+    return 1 if (huecos or sin_aplicar or nulo_ok is not True) else 0
 
 
 if __name__ == "__main__":

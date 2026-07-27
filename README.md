@@ -511,8 +511,8 @@ figure. The truth sits between them, which is why both numbers ship.
 
 ## Tests
 ```bash
-python test_medir_compacts_generico.py    # 61 casos
-python mutar.py                           # 28 sabotajes contra esos 61 casos
+python test_medir_compacts_generico.py    # 62 casos
+python mutar.py                           # 28 sabotajes contra esos 62 casos
 ```
 
 
@@ -540,13 +540,13 @@ mirado dentro del propio paquete, es el mismo error que retirarla tarde.*
 
 ## Requisitos / Requirements
 Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está **certificado**
-desde el 27/07/2026: nueve trabajos en verde, con 3.9, 3.12 y 3.14 sobre Windows, Linux y Mac.
+desde el 27/07/2026: nueve trabajos en verde, con 3.9, 3.11 y 3.13 sobre Windows, Linux y Mac.
 Hasta esa mañana aquí ponía «declarado, no certificado», y era cierto. Dejó de serlo con el primer
 push y siguió publicado unas horas: una nota de humildad caduca igual que una cifra, y esta caducó
 en la dirección que hace parecer el repositorio peor de lo que es.
 
 Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is **certified** as of
-27/07/2026: nine green jobs across 3.9, 3.12 and 3.14 on Windows, Linux and Mac. Until that morning
+27/07/2026: nine green jobs across 3.9, 3.11 and 3.13 on Windows, Linux and Mac. Until that morning
 this line read «declared, not certified», which was true. It stopped being true on the first push
 and stayed up for a few hours: a note of humility goes stale like any other figure, and this one
 went stale in the direction that makes the repository look worse than it is.
