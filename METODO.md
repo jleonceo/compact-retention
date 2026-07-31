@@ -7,7 +7,7 @@
 ### Cómo se midió: la parte reutilizable
 
 Lo de arriba son los resultados. Esto es cómo se consiguieron. El orden de los pasos importa
-más que la herramienta. Se puede copiar en cualquier medición parecida. Fueron tres días, y dos y medio
+más que la herramienta. Se puede copiar en cualquier medición parecida. Fueron tres días. Dos y medio
 de ellos se fueron en medir en vez de en configurar.
 
 **1. Instrumentar antes de tocar nada.** Un hook que se dispara en el corte y sella el transcript
@@ -20,7 +20,7 @@ instrumento: si nació después de la ventana que dice cubrir, **su silencio no 
 **2. Una sola vara para todos los casos.** Las cinco primeras medidas se hicieron cada una a su
 manera. Una contaba ficheros escritos que el resumen nombra; otra, ficheros sin commitear que el
 resumen nombra. Puestas en fila dibujaban un desplome que no existía. Cifra bien calculada sobre
-objeto distinto sigue siendo falsa, y encima con aire de rigor.
+objeto distinto sigue siendo falsa y encima con aire de rigor.
 
 **3. Escribir la predicción antes de ver el resultado.** Antes de subir el umbral se dejó escrito
 dónde tenía que caer el corte: entre 585.000 y 600.000 tokens. Cayó en 580.370, o sea que **la
@@ -29,7 +29,7 @@ ver el dato no es una predicción.
 
 **4. Refutar la hipótesis rival antes de celebrar la propia.** Existe un mecanismo documentado que,
 de estar actuando aquí, habría invalidado el trabajo entero: uno que recorta el contexto al llegar
-al 90 % de ocupación. Se descartó con dato propio, y el argumento importa entero: los cortes no
+al 90 % de ocupación. Se descartó con dato propio. El argumento importa entero: los cortes no
 caían a un porcentaje cualquiera, sino **en la ventana menos un margen**, que es la
 firma de un umbral por buffer y no la de ese mecanismo. Con la mitad del argumento (el 90 % contra
 el 98,7 %) la conclusión ni siquiera se sostiene.
@@ -38,12 +38,12 @@ el 98,7 %) la conclusión ni siquiera se sostiene.
 la conclusión era que el resumen tiene un techo fijo de nueve a diecisiete nombres, pasara lo que
 pasara. Se ensanchó a diez-veinte al llegar la octava ventana, y con diecinueve se cayó del todo:
 cuatro pasaban de diecisiete, dos de ellas con 21 y 28. Con veintiséis, la variable que manda
-resultó ser la densidad. La tesis del techo estaba escrita y publicada, y sigue escrita al
+resultó ser la densidad. La tesis del techo estaba escrita y publicada. Sigue escrita al
 lado de lo que la corrige, porque un registro que borra sus versiones anteriores no enseña cómo se
 corrige una medición.
 
 **6. Un baseline que se está midiendo no admite dos ejecuciones a la vez.** El error más caro de la
-serie casi no se ve: un proceso de fondo que no imprime nada no está parado, así que se relanzó, y
+serie casi no se ve: un proceso de fondo que no imprime nada no está parado, así que se relanzó y
 los dos quedaron vivos escribiendo el mismo fichero de referencia. En medio se cambió el código bajo
 medición. El segundo habría sobrescrito el «antes» con cifras del «después», el diff habría salido
 plano y **nada lo habría delatado**: dos ficheros con el nombre correcto y el contenido

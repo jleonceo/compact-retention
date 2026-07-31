@@ -22,8 +22,8 @@ Por cada corte, compara la ventana previa contra el resumen que la reemplazó:
 - cobertura: qué fracción de las entidades de la ventana aparece literal en el resumen;
 - recuento absoluto de nombres conservados, que es donde se ve el techo del resumen.
 
-Las entidades son las rutas de fichero escritas en la ventana (`Write`/`Edit`/`MultiEdit`/`NotebookEdit`),
-y como clases secundarias los hashes de commit y los identificadores de dominio (`ABC-001`) del texto.
+Las entidades son las rutas de fichero escritas en la ventana (`Write`/`Edit`/`MultiEdit`/`NotebookEdit`).
+Como clases secundarias, los hashes de commit y los identificadores de dominio (`ABC-001`) del texto.
 
 ### Por qué lee solo el JSONL
 El JSONL de sesión ya contiene, en orden, los turnos previos al corte y el mensaje marcado
@@ -79,7 +79,7 @@ medirlas.
 ------------------------------------------------------------------------------
 ```
 
-Los dos últimos párrafos salen siempre, y están ahí porque la cifra se lee sola como pérdida. No lo
+Los dos últimos párrafos salen siempre. Están ahí porque la cifra se lee sola como pérdida. No lo
 es: de los veintisiete cortes que este autor lleva medidos uno por uno, **veintitrés** no perdieron
 nada que no se pudiera recuperar de git o del disco. En los otros cuatro se perdió algo de verdad,
 seis ficheros en total. Cuatro sobre veintisiete sigue siendo poco, pero es cuatro veces más de lo que se publicaba.
@@ -109,7 +109,7 @@ contexto saturado. El corte se adelanta con dos variables de entorno, ambas docu
 }
 ```
 
-El porcentaje solo actúa cuando la ventana va declarada, y solo puede bajar el umbral, nunca
+El porcentaje solo actúa cuando la ventana va declarada y solo puede bajar el umbral, nunca
 subirlo. Entra al reiniciar Claude Code: la sesión en curso sigue cortando donde cortaba. Esto no es
 un hallazgo de nadie, está en la documentación oficial. Lo que aporta este repositorio es el número
 medido detrás de la elección del porcentaje.
@@ -129,7 +129,7 @@ override 60 ~585k   n=12   conservado 61 %   nombres por ventana 27,5
 ```
 
 Leído de corrido parece que doblar el umbral cuesta veintisiete puntos de conservación. No es eso lo
-que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro, y la variable que manda
+que dice el dato. Esas ventanas llevaban casi el triple de nombres dentro. La variable que manda
 es esa:
 
 ```
@@ -147,10 +147,10 @@ sola ventana del corte bajo, al 65 %, contra tres del alto, entre el 50 % y el 9
 muestra no se puede separar el efecto del umbral del efecto de la densidad.
 
 **Una cifra de esta tabla estuvo mal publicada y conviene saber por qué.** La ventana del 24/07 a
-las 10:52 estaba contada en el régimen por defecto, y su corte real fue de 292.789 tokens, o sea
+las 10:52 estaba contada en el régimen por defecto. Su corte real fue de 292.789 tokens, o sea
 override 30. La causa: las etiquetas de las demás filas llevan su corte escrito y esa no, así que
 al agrupar por etiqueta se fue al grupo equivocado. Con ella en su sitio, el régimen por defecto
-pasa de 56 % a 46 % y el bajo de 85 % a 88 %. **La tesis no se cae, se refuerza**, y el fallo lo
+pasa de 56 % a 46 % y el bajo de 85 % a 88 %. **La tesis no se cae, se refuerza**. El fallo lo
 encontró un revisor cruzando la etiqueta contra la bitácora. El instrumento no lo vio.
 
 Así que el consejo que sale del dato no es el que parecía al empezar. Adelantar el corte funciona de
@@ -162,7 +162,7 @@ La densidad del trabajo no se elige. El momento del commit sí.
 
 **Lo que cuesta adelantar el corte.** Cada ciclo paga un peaje fijo antes de escribir una línea
 (prompt de sistema, herramientas, descripciones de skills y ficheros de contexto): 69.213 tokens
-medidos el 23/07/2026, y entre 70.000 y 71.000 en las últimas diez sesiones. Sobre el corte por
+medidos el 23/07/2026 y entre 70.000 y 71.000 en las últimas diez sesiones. Sobre el corte por
 defecto eso es el 7,0 %; sobre un corte en 292k pasa a ser el 23,6 %, porque el mismo peaje se paga
 3,4 veces más a menudo. Es la razón para no bajar el porcentaje más de lo que pide tu caso.
 
@@ -190,7 +190,7 @@ directamente puede dejar de funcionar en cualquier actualización**. Lo dice en
 [code.claude.com/docs/en/sessions](https://code.claude.com/docs/en/sessions). Ahí recomienda usar
 `/export` o las interfaces de script en su lugar.
 
-Esta herramienta hace justo lo que ahí se desaconseja, y lo sabes antes de apoyarte en sus
+Esta herramienta hace justo lo que ahí se desaconseja y lo sabes antes de apoyarte en sus
 números:
 
 - Probada contra Claude Code 2.x, en julio de 2026. Si el formato cambia, lo que verás es un
@@ -219,8 +219,8 @@ distinguen, así que la cobertura sale algo más baja de lo que corresponde.
 
 ### El límite del emparejamiento
 El emparejamiento de rutas es por nombre de fichero. Dos rutas distintas con el mismo nombre
-(`SKILL.md`) se unen, y el porcentaje sale **optimista**. Se informa aparte el recuento por ruta
-completa, que es el **pesimista**. La verdad está entre los dos, y por eso se publican los dos
+(`SKILL.md`) se unen y el porcentaje sale **optimista**. Se informa aparte el recuento por ruta
+completa, que es el **pesimista**. La verdad está entre los dos y por eso se publican los dos
 números.
 
 ---
@@ -429,7 +429,7 @@ python mutar.py                           # 28 sabotajes contra esos 62 casos
 
 
 El segundo comando es el que da derecho a fiarse del primero. Sabotea el código a propósito, una
-línea cada vez, y exige que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
+línea cada vez, para exigir que la suite se ponga roja. Un sabotaje que nadie caza no es un fallo del
 código: es una línea que ningún caso vigila. Hoy son veintiocho de veintiocho, cero huecos.
 
 Y hay un sabotaje número veintinueve que **tiene que salir hueco**: alarga un comentario y no cambia
@@ -448,7 +448,7 @@ veinte casos en verde. De ahí salen los veintiocho sabotajes de hoy.*
 Python 3.9+. Solo biblioteca estándar: ni pytest ni nada que instalar. Ese 3.9 está **certificado**
 desde el 27/07/2026: nueve trabajos en verde, con 3.9, 3.11 y 3.13 sobre Windows, Linux y Mac.
 Hasta esa mañana aquí ponía «declarado, no certificado», y era cierto. Dejó de serlo con el primer
-push y siguió publicado unas horas: una nota de humildad caduca igual que una cifra, y esta caducó
+push y siguió publicado unas horas: una nota de humildad caduca igual que una cifra. Esta caducó
 en la dirección que hace parecer el repositorio peor de lo que es.
 
 Python 3.9+, standard library only: no pytest, nothing to install. That 3.9 is **certified** as of
