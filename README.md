@@ -19,8 +19,8 @@ resumen que olvida los ficheros que tocaste, o el paso en el que ibas, te obliga
 
 ### Qué mide
 Por cada corte, compara la ventana previa contra el resumen que la reemplazó:
-- **cobertura**: qué fracción de las entidades de la ventana aparece literal en el resumen;
-- **recuento absoluto de nombres conservados**, que es donde se ve el techo del resumen.
+- cobertura: qué fracción de las entidades de la ventana aparece literal en el resumen;
+- recuento absoluto de nombres conservados, que es donde se ve el techo del resumen.
 
 Las entidades son las rutas de fichero escritas en la ventana (`Write`/`Edit`/`MultiEdit`/`NotebookEdit`),
 y como clases secundarias los hashes de commit y los identificadores de dominio (`ABC-001`) del texto.
@@ -193,10 +193,10 @@ directamente puede dejar de funcionar en cualquier actualización**. Lo dice en
 Esta herramienta hace justo lo que ahí se desaconseja, y lo sabes antes de apoyarte en sus
 números:
 
-- **Probada contra Claude Code 2.x**, en julio de 2026. Si el formato cambia, lo que verás es un
+- Probada contra Claude Code 2.x, en julio de 2026. Si el formato cambia, lo que verás es un
   recuento que baja sin motivo en vez de un error: por eso el banco fabrica sus propias trazas y no
   depende de tu historial.
-- **Tus transcripts se borran a los 30 días** por defecto (`cleanupPeriodDays`). Cualquier medición
+- Tus transcripts se borran a los 30 días por defecto (`cleanupPeriodDays`). Cualquier medición
   «desde siempre» tiene ese suelo, y un corte de hace tres meses ya no se puede medir: su transcript
   no está. **Y esto vale para las cifras de aquí arriba:** la instalación de la que salen tiene ese
   valor puesto en 3650, o sea el borrado desactivado. Con los treinta días de fábrica no habría
@@ -234,8 +234,8 @@ the files you touched, or the step you were on, forces you to reconstruct it.
 
 ### What it measures
 For each cut, it compares the pre-cut window against the summary that replaced it:
-- **coverage**: what fraction of the window's entities appears verbatim in the summary;
-- **absolute count of preserved names**, which is where the summary's ceiling shows.
+- coverage: what fraction of the window's entities appears verbatim in the summary;
+- absolute count of preserved names, which is where the summary's ceiling shows.
 
 Entities are the file paths written in the window (`Write`/`Edit`/`MultiEdit`/`NotebookEdit`), plus commit
 hashes and domain identifiers (`ABC-001`) found in the text as secondary classes.
@@ -390,10 +390,10 @@ or the script interfaces instead.
 This tool does exactly what that paragraph advises against, and you should know before leaning on
 its numbers:
 
-- **Tested against Claude Code 2.x**, July 2026. If the format changes, what you see is a count
+- Tested against Claude Code 2.x, July 2026. If the format changes, what you see is a count
   dropping for no reason, not an error. That is why the test suite builds its own traces and never
   reads your real history.
-- **Your transcripts are deleted after 30 days** by default (`cleanupPeriodDays`). Any "since the
+- Your transcripts are deleted after 30 days by default (`cleanupPeriodDays`). Any "since the
   beginning" measurement has that floor, and a compact from three months ago can no longer be
   measured: its transcript is gone. **This applies to the figures above:** the install they come from has
   that value set to 3650, which disables the deletion. With the factory thirty days there would not
