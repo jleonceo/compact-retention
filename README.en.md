@@ -2,6 +2,8 @@ Versión en español: [README.md](README.md)
 
 # compact-retention
 
+[![ci](https://github.com/jleonceo/compact-retention/actions/workflows/ci.yml/badge.svg)](https://github.com/jleonceo/compact-retention/actions/workflows/ci.yml)
+
 Measures what survives the automatic summary of a long context in Claude Code, reading only the session
 JSONL. No install, no custom hooks. **You run the measurer on your own sessions; the twenty-seven-cut
 series below comes from a private install and that part you cannot replay.**

@@ -39,7 +39,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        # ubuntu-22.04 y no ubuntu-latest: la imagen nueva ya no instala Python 3.9 (13/11/2026)
+        os: [windows-latest, ubuntu-22.04, macos-latest]
         python-version: ["3.9", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@v4
