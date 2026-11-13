@@ -14,6 +14,17 @@ summary and work continues. The practical question is how much actually survives
 the files you touched, or the step you were on, forces you to reconstruct it.
 
 ## What it measures
+
+```mermaid
+flowchart TD
+    J[Session JSONL] --> W[Window before the cut<br/>files written, commits and identifiers]
+    J --> R[Summary that replaces it<br/>isCompactSummary]
+    W & R --> C{Which entities from the window<br/>appear verbatim in the summary?}
+    C --> CO[Coverage]
+    C --> N[Names kept]
+    style C fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+```
+
 For each cut, it compares the pre-cut window against the summary that replaced it:
 - coverage: what fraction of the window's entities appears verbatim in the summary;
 - absolute count of preserved names, which is where the summary's ceiling shows.

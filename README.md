@@ -14,6 +14,17 @@ sustituye por un resumen y el trabajo continúa. La pregunta práctica es cuánt
 resumen que olvida los ficheros que tocaste, o el paso en el que ibas, te obliga a re-derivarlo.
 
 ## Qué mide
+
+```mermaid
+flowchart TD
+    J[JSONL de la sesión] --> W[Ventana previa al corte<br/>rutas escritas, commits e identificadores]
+    J --> R[Resumen que la sustituye<br/>isCompactSummary]
+    W & R --> C{¿Qué entidades de la ventana<br/>aparecen literales en el resumen?}
+    C --> CO[Cobertura]
+    C --> N[Nombres conservados]
+    style C fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+```
+
 Por cada corte, compara la ventana previa contra el resumen que la reemplazó:
 - cobertura: qué fracción de las entidades de la ventana aparece literal en el resumen;
 - recuento absoluto de nombres conservados, que es donde se ve el techo del resumen.
