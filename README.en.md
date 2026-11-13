@@ -19,7 +19,7 @@ the files you touched, or the step you were on, forces you to reconstruct it.
 flowchart TD
     J[Session JSONL] --> W[Window before the cut<br/>files written, commits and identifiers]
     J --> R[Summary that replaces it<br/>isCompactSummary]
-    W & R --> C{Which entities from the window<br/>appear verbatim in the summary?}
+    W & R --> C[Which entities from the window<br/>appear verbatim in the summary?]
     C --> CO[Coverage]
     C --> N[Names kept]
     style C fill:#e3f2fd,stroke:#1565c0,color:#0d47a1

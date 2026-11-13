@@ -19,7 +19,7 @@ resumen que olvida los ficheros que tocaste, o el paso en el que ibas, te obliga
 flowchart TD
     J[JSONL de la sesión] --> W[Ventana previa al corte<br/>rutas escritas, commits e identificadores]
     J --> R[Resumen que la sustituye<br/>isCompactSummary]
-    W & R --> C{¿Qué entidades de la ventana<br/>aparecen literales en el resumen?}
+    W & R --> C[¿Qué entidades de la ventana<br/>aparecen literales en el resumen?]
     C --> CO[Cobertura]
     C --> N[Nombres conservados]
     style C fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
